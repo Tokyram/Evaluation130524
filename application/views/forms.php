@@ -48,20 +48,12 @@
       <div class="col-lg-6">
         <div class="card">
            <div class="card-body">
-           <div class="card-title">CREATION DE PACK</div>
+           <div class="card-title">AJOUT DE TYPE DE TRAVAUX</div>
            <hr>
-            <form action="#" method="post">
+            <form action="<?= base_url("Controller/insertion_type_travaux"); ?>" method="post">
            <div class="form-group">
-            <label for="input-6">Nom du pack</label>
-            <input type="text" name="nom" class="form-control form-control-rounded" id="input-6" placeholder="nom du pack">
-           </div>
-           <div class="form-group">
-            <label for="input-7">Prix Pack</label>
-            <input type="text" name="prix" class="form-control form-control-rounded" id="input-7" placeholder="prix du pack">
-           </div>
-           <div class="form-group">
-            <label for="input-8">Mobile</label>
-            <input type="file" name="image" class="form-control form-control-rounded" id="input-8" placeholder="Enter Your Mobile Number">
+            <label for="input-6">Type</label>
+            <input type="text" name="designation" class="form-control form-control-rounded" id="input-6" placeholder="Entre le type de travaux">
            </div>
            
            <div class="form-group">
@@ -75,34 +67,46 @@
       <div class="col-lg-6">
         <div class="card">
            <div class="card-body">
-           <div class="card-title">VENTE DE BILLET</div>
+           <div class="card-title">AJOUT DE TRAVAUX</div>
            <hr>
-            <form action="#" method="post">
-           <div class="form-group">
-            <label for="input-6">Nom du pack</label>
+            <form action="<?=base_url("Controller/insertion_travaux");?>" method="post">
+                <div class="form-group">
+                  <label for="input-6">Type de travaux</label>
+                    <select name="id_type_travaux" class="form-control form-control-rounded" id="input-6">
+                      <?php foreach($type_travaux as $tt){ ?>
+                          <option value="<?php echo $tt->id;?>"><?php echo $tt->designation;?></option>
+                      <?php }?>
+                    </select>
+                </div>
 
-            <select name="pack" class="form-control form-control-rounded" id="input-6">
-                
-                      <option value="">wshjnwdfb</option>
-              
-            </select>
-            <!-- <input type="text" name="nom" class="form-control form-control-rounded" id="input-6" placeholder="nom du pack"> -->
-           </div>
+                <div class="form-group">
+                    <label for="input-7">Designation du travaux</label>
+                    <input type="text" name="designation" class="form-control form-control-rounded" id="input-7" placeholder="Designation">
+                </div>
 
-           <!-- <div class="form-group">
-              <label for="input-7">Nombre de billet</label>
-              <input type="text" name="prix" class="form-control form-control-rounded" id="input-7" placeholder="Nombre de billet">
-           </div> -->
+                <div class="form-group">
+                  <label for="input-6">Unite de mesure</label>
+                    <select name="id_unite" class="form-control form-control-rounded" id="input-6">
+                      <?php foreach($unite as $u){ ?>
+                          <option value="<?php echo $u->id;?>"><?php echo $u->designation;?></option>
+                      <?php }?>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="input-7">Prix unitaire</label>
+                    <input type="text" name="prix_unitaire" class="form-control form-control-rounded" id="input-7" placeholder="Prix unitaire">
+                </div>
         
            <div class="form-group">
             <button type="submit" class="btn btn-light btn-round px-5"><i class="icon-lock"></i> Acheter </button>
-          </div>
+            </div>
           </form>
          </div>
          </div>
       </div>
 
-      <div class="col-lg-6">
+      <!-- <div class="col-lg-6">
         <div class="card">
            <div class="card-body">
            <div class="card-title">Importer un fichier csv</div>
@@ -120,7 +124,7 @@
           </form>
          </div>
          </div>
-      </div>
+      </div> -->
     </div><!--End Row-->
 
 	<!--start overlay-->

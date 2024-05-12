@@ -29,9 +29,7 @@
    <div id="pageloader-overlay" class="visible incoming"><div class="loader-wrapper-outer"><div class="loader-wrapper-inner" ><div class="loader"></div></div></div></div>
    <!-- end loader -->
 
-   <?php if(isset($erreur)) {?>
-                        <p><?php echo $erreur; ?></p>
-                    <?php }?>
+                   
 
 <!-- Start wrapper-->
  <div id="wrapper">
@@ -44,20 +42,28 @@
 		 		<img src="<?=base_url('assets/images/logo-icon.png')?>" alt="logo icon">
 		 	</div>
 		  <div class="card-title text-uppercase text-center py-3">Sign In</div>
-		    <form action="<?=base_url("Controller/home");?>" method="post">
+
+     
+                     <div class="card">
+                        <?php if(isset($erreur)) { ?>
+                          <p><?php echo $erreur; ?></p>
+                        <?php }?>
+                     </div> 
+                    
+		    <form action="<?=base_url("Controller/validerLogin");?>" method="post">
 			  <div class="form-group">
-			  <label for="exampleInputUsername" class="sr-only">Username</label>
+			  <label for="exampleInputUsername" class="sr-only">Email</label>
 			   <div class="position-relative has-icon-right">
-				  <input type="email" id="exampleInputUsername" class="form-control input-shadow" name="email" placeholder="Enter Username">
+				  <input type="email" id="exampleInputUsername" class="form-control input-shadow" name="email" placeholder="Votre email">
 				  <div class="form-control-position">
 					  <i class="icon-user"></i>
 				  </div>
 			   </div>
 			  </div>
 			  <div class="form-group">
-			  <label for="exampleInputPassword" class="sr-only">Password</label>
+			  <label for="exampleInputPassword" class="sr-only">Mot de passe</label>
 			   <div class="position-relative has-icon-right">
-				  <input type="password" id="exampleInputPassword" class="form-control input-shadow" name="mdp" placeholder="Enter Password">
+				  <input type="password" id="exampleInputPassword" class="form-control input-shadow" name="mdp" placeholder="Votre mot de passe">
 				  <div class="form-control-position">
 					  <i class="icon-lock"></i>
 				  </div>

@@ -12,7 +12,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
   <meta name="description" content=""/>
   <meta name="author" content=""/>
-  <title>Dashtreme Admin - Free Dashboard for Bootstrap 4 by Codervent</title>
+  <title>Construction</title>
   <!-- loader-->
   <link href="<?=base_url('assets/css/pace.min.css')?>" rel="stylesheet"/>
   <script src="<?=base_url('assets/js/pace.min.js')?>"></script>
@@ -36,7 +36,7 @@
   
 </head>
 
-<body class="bg-theme bg-theme1">
+<body class="bg-theme bg-theme2">
  
 <!-- Start wrapper-->
  <div id="wrapper">
@@ -46,7 +46,7 @@
      <div class="brand-logo">
       <a href="index.html">
        <img src="<?=base_url('assets/images/logo-icon.png')?>" class="logo-icon" alt="logo icon">
-       <h5 class="logo-text">Dashtreme Admin</h5>
+       <h5 class="logo-text">CONTRUCTION</h5>
      </a>
    </div>
    <ul class="sidebar-menu do-nicescrol">
@@ -68,13 +68,13 @@
 
       <li>
         <a href="<?=base_url('Controller/form')?>">
-          <i class="zmdi zmdi-format-list-bulleted"></i> <span>Forms</span>
+          <i class="zmdi zmdi-format-list-bulleted"></i> <span>Insertion de données</span>
         </a>
       </li>
 
       <li>
         <a href="<?=base_url('Controller/table')?>">
-          <i class="zmdi zmdi-grid"></i> <span>Tables</span>
+          <i class="zmdi zmdi-grid"></i> <span>Liste de travaux</span>
         </a>
       </li>
 
@@ -103,10 +103,10 @@
         </a>
       </li>
 
-      <li class="sidebar-header">LABELS</li>
+      <!-- <li class="sidebar-header">LABELS</li>
       <li><a href="javaScript:void();"><i class="zmdi zmdi-coffee text-danger"></i> <span>Important</span></a></li>
       <li><a href="javaScript:void();"><i class="zmdi zmdi-chart-donut text-success"></i> <span>Warning</span></a></li>
-      <li><a href="javaScript:void();"><i class="zmdi zmdi-share text-info"></i> <span>Information</span></a></li>
+      <li><a href="javaScript:void();"><i class="zmdi zmdi-share text-info"></i> <span>Information</span></a></li> -->
 
     </ul>
    

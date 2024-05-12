@@ -1,162 +1,124 @@
 
-<div class="clearfix"></div>
+<div class="clearfix">
+
+</div>
 	
   <div class="content-wrapper">
     <div class="container-fluid">
      
-      <div class="row mt-3">
-        <div class="col-lg-6">
-          <div class="card">
-            <div class="card-body">
-              <h5 class="card-title">Basic Table</h5>
-			  <div class="table-responsive">
-               <table class="table">
-                  <thead>
-                    <tr>
-                      <th scope="col">#</th>
-                      <th scope="col">First</th>
-                      <th scope="col">Last</th>
-                      <th scope="col">Handle</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <th scope="row">1</th>
-                      <td>Mark</td>
-                      <td>Otto</td>
-                      <td>@mdo</td>
-                    </tr>
-                    <tr>
-                      <th scope="row">2</th>
-                      <td>Jacob</td>
-                      <td>Thornton</td>
-                      <td>@fat</td>
-                    </tr>
-                    <tr>
-                      <th scope="row">3</th>
-                      <td>Larry</td>
-                      <td>the Bird</td>
-                      <td>@twitter</td>
-                    </tr>
-                  </tbody>
-                </table>
-            </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-lg-6">
-          <div class="card">
-            <div class="card-body">
-              <h5 class="card-title">Bordered Table</h5>
-			  <div class="table-responsive">
-              <table class="table table-bordered">
-                <thead>
-                  <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">First</th>
-                    <th scope="col">Last</th>
-                    <th scope="col">Handle</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <th scope="row">1</th>
-                    <td>Mark</td>
-                    <td>Otto</td>
-                    <td>@mdo</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">2</th>
-                    <td>Jacob</td>
-                    <td>Thornton</td>
-                    <td>@fat</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">3</th>
-                    <td colspan="2">Larry the Bird</td>
-                    <td>@twitter</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            </div>
-          </div>
-        </div>
-      </div><!--End Row-->
-
-
+    <div class="row">
+      <div class="col-lg-12">
+        <a href="<?php echo base_url("Controller/resetData"); ?>" class="btn btn-danger">Réinitialiser les données</a>
+      </div>
+    </div>
+<br>
       <div class="row">
-        <div class="col-lg-6">
+        <div class="col-lg-12">
           <div class="card">
             <div class="card-body">
-              <h5 class="card-title">Striped Table</h5>
-			  <div class="table-responsive">
-               <table class="table table-striped">
-                  <thead>
-                    <tr>
-                      <th scope="col">#</th>
-                      <th scope="col">First</th>
-                      <th scope="col">Last</th>
-                      <th scope="col">Handle</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <th scope="row">1</th>
-                      <td>Mark</td>
-                      <td>Otto</td>
-                      <td>@mdo</td>
-                    </tr>
-                    <tr>
-                      <th scope="row">2</th>
-                      <td>Jacob</td>
-                      <td>Thornton</td>
-                      <td>@fat</td>
-                    </tr>
-                    <tr>
-                      <th scope="row">3</th>
-                      <td>Larry</td>
-                      <td>the Bird</td>
-                      <td>@twitter</td>
-                    </tr>
-                  </tbody>
-                </table>
-            </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-lg-6">
-          <div class="card">
-            <div class="card-body">
-              <h5 class="card-title">Hover Table</h5>
+              <h5 class="card-title">Travaux preparatoire</h5>
 			  <div class="table-responsive">
               <table class="table table-hover">
                 <thead>
-                  <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">First</th>
-                    <th scope="col">Last</th>
-                    <th scope="col">Handle</th>
+                  <tr style="color: #ffd400;">
+                    <th scope="col">Identifiant</th>
+                    <th scope="col">Designation</th>
+                    <th scope="col">Unité</th>
+                    <th scope="col">Prix unitaire</th>
+                    <th scope="col"></th>
                   </tr>
                 </thead>
                 <tbody>
+                <?php foreach($travaux_p as $tt){ ?>
                   <tr>
-                    <th scope="row">1</th>
-                    <td>Mark</td>
-                    <td>Otto</td>
-                    <td>@mdo</td>
+                    <th><?php echo $tt->id_travaux;?></th>
+                    <td><?php echo $tt->designation_travaux;?></td>
+                    <td><?php echo $tt->designation_unite;?></td>
+                    <td><?php echo $tt->prix_unitaire;?></td>
+                    <td style="float:right;">
+                      <a href="<?= base_url('Controller/modification?id=' . $tt->id_travaux) ?>" class="btn btn-light btn-round px-5"><i class="icon-note"></i></a>
+                    
+                      <a style="background-color: red; border:none;" href="<?= base_url('Controller/supprimer/' .$tt->id_travaux) ?>" class="btn btn-light btn-round px-5">Supprimer</i></a>
+                    </td>
+                  
                   </tr>
+                  <?php }?>
+                </tbody>
+              </table>
+            </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-12">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Travaux terrassement</h5>
+			  <div class="table-responsive">
+              <table class="table table-hover">
+                <thead>
+                  <tr  style="color: #ffd400;">
+                    <th scope="col">Identifiant</th>
+                    <th scope="col">Designation</th>
+                    <th scope="col">Unité</th>
+                    <th scope="col">Prix unitaire</th>
+                    <th scope="col"></th>
+
+                  </tr>
+                </thead>
+                <tbody>
+                <?php foreach($travaux_t as $tt){ ?>
                   <tr>
-                    <th scope="row">2</th>
-                    <td>Jacob</td>
-                    <td>Thornton</td>
-                    <td>@fat</td>
+                    <th><?php echo $tt->id_travaux;?></th>
+                    <td><?php echo $tt->designation_travaux;?></td>
+                    <td><?php echo $tt->designation_unite;?></td>
+                    <td><?php echo $tt->prix_unitaire;?></td>
+                    <td style="float:right;">
+                      <a href="<?= base_url('Controller/modification?id=' . $tt->id_travaux) ?>" class="btn btn-light btn-round px-5"><i class="icon-note"></i></a>
+                    
+                      <a style="background-color: red; border:none;" href="<?= base_url('Controller/supprimer/' .$tt->id_travaux) ?>" class="btn btn-light btn-round px-5">Supprimer</i></a>
+                    </td>
                   </tr>
+                  <?php }?>
+                 
+                </tbody>
+              </table>
+            </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-12">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Travaux en infrastructure</h5>
+			  <div class="table-responsive">
+              <table class="table table-hover">
+                <thead>
+                  <tr  style="color: #ffd400;">
+                    <th scope="col">Identifiant</th>
+                    <th scope="col">Designation</th>
+                    <th scope="col">Unité</th>
+                    <th scope="col">Prix unitaire</th>
+                    <th scope="col"></th>
+
+                  </tr>
+                </thead>
+                <tbody>
+                <?php foreach($travaux_i as $tt){ ?>
                   <tr>
-                    <th scope="row">3</th>
-                    <td colspan="2">Larry the Bird</td>
-                    <td>@twitter</td>
+                    <th><?php echo $tt->id_travaux;?></th>
+                    <td><?php echo $tt->designation_travaux;?></td>
+                    <td><?php echo $tt->designation_unite;?></td>
+                    <td><?php echo $tt->prix_unitaire;?></td>
+                    <td style="float:right;">
+                      <a href="<?= base_url('Controller/modification?id=' . $tt->id_travaux) ?>" class="btn btn-light btn-round px-5"><i class="icon-note"></i></a>
+                    
+                      <a style="background-color: red; border:none;" href="<?= base_url('Controller/supprimer/' .$tt->id_travaux) ?>" class="btn btn-light btn-round px-5">Supprimer</i></a>
+                    </td>
                   </tr>
+                  <?php }?>
+                 
                 </tbody>
               </table>
             </div>
@@ -165,109 +127,7 @@
         </div>
       </div><!--End Row-->
 
-      <div class="row">
-        <div class="col-lg-6">
-          <div class="card">
-            <div class="card-body">
-              <h5 class="card-title">Small Table</h5>
-			  <div class="table-responsive">
-               <table class="table table-sm">
-                <thead>
-                  <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">First</th>
-                    <th scope="col">Last</th>
-                    <th scope="col">Handle</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <th scope="row">1</th>
-                    <td>Mark</td>
-                    <td>Otto</td>
-                    <td>@mdo</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">2</th>
-                    <td>Jacob</td>
-                    <td>Thornton</td>
-                    <td>@fat</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">3</th>
-                    <td colspan="2">Larry the Bird</td>
-                    <td>@twitter</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-lg-6">
-          <div class="card">
-            <div class="card-body">
-              <h5 class="card-title">Responsive Table</h5>
-              <div class="table-responsive">
-                <table class="table">
-                  <thead>
-                    <tr>
-                      <th scope="col">#</th>
-                      <th scope="col">Heading</th>
-                      <th scope="col">Heading</th>
-                      <th scope="col">Heading</th>
-                      <th scope="col">Heading</th>
-                      <th scope="col">Heading</th>
-                      <th scope="col">Heading</th>
-                      <th scope="col">Heading</th>
-                      <th scope="col">Heading</th>
-                      <th scope="col">Heading</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <th scope="row">1</th>
-                      <td>Cell</td>
-                      <td>Cell</td>
-                      <td>Cell</td>
-                      <td>Cell</td>
-                      <td>Cell</td>
-                      <td>Cell</td>
-                      <td>Cell</td>
-                      <td>Cell</td>
-                      <td>Cell</td>
-                    </tr>
-                    <tr>
-                      <th scope="row">2</th>
-                      <td>Cell</td>
-                      <td>Cell</td>
-                      <td>Cell</td>
-                      <td>Cell</td>
-                      <td>Cell</td>
-                      <td>Cell</td>
-                      <td>Cell</td>
-                      <td>Cell</td>
-                      <td>Cell</td>
-                    </tr>
-                    <tr>
-                      <th scope="row">3</th>
-                      <td>Cell</td>
-                      <td>Cell</td>
-                      <td>Cell</td>
-                      <td>Cell</td>
-                      <td>Cell</td>
-                      <td>Cell</td>
-                      <td>Cell</td>
-                      <td>Cell</td>
-                      <td>Cell</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div><!--End Row-->
+      
 	  
 	  <!--start overlay-->
 		  <div class="overlay toggle-menu"></div>

@@ -28,27 +28,82 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 			return $this->db->query($sql)->result();
 		}
 
-		public function findDiffusion(){
-			$sql = "SELECT 
-						diffusion.id AS id_diffusion, 
-						film.id AS film_id,
-						film.nom_film,
-						film.description,
-						film.image,
-						salle.nom_salle,
-						diffusion.date_diffusion,
-						diffusion.heure_diffusion
-					FROM 
-						cinema.diffusion
-					JOIN 
-						cinema.film ON diffusion.id_film = film.id
-					JOIN 
-						cinema.salle ON diffusion.id_salle = salle.id";
+		public function findtravaut(){
+			$sql = "SELECT t.id AS id_travaux, t.designation AS designation_travaux, u.designation AS designation_unite, t.prix_unitaire, tt.id AS id_type_travaux, tt.designation AS designation_type_travaux
+						FROM btp.travaux AS t
+						JOIN btp.type_travaux AS tt ON t.id_type_travaux = tt.id
+						JOIN btp.unite AS u ON t.id_unite = u.id
+						WHERE tt.designation = 'Travaux terrassement'";
 		
+			return $this->db->query($sql)->result();
+		}
+
+		public function findtravaup(){
+			$sql = "SELECT t.id AS id_travaux, t.designation AS designation_travaux, u.designation AS designation_unite, t.prix_unitaire, tt.id AS id_type_travaux, tt.designation AS designation_type_travaux
+					FROM btp.travaux AS t
+					JOIN btp.type_travaux AS tt ON t.id_type_travaux = tt.id
+					JOIN btp.unite AS u ON t.id_unite = u.id
+					WHERE tt.designation = 'Travaux preparatoire'";
+				
 			return $this->db->query($sql)->result();
 		}
 		
 
+		public function findtravaui(){
+			$sql = "SELECT t.id AS id_travaux, t.designation AS designation_travaux,u.designation AS designation_unite, t.prix_unitaire, tt.id AS id_type_travaux, tt.designation AS designation_type_travaux
+						FROM btp.travaux AS t
+						JOIN btp.type_travaux AS tt ON t.id_type_travaux = tt.id
+						JOIN btp.unite AS u ON t.id_unite = u.id
+						WHERE tt.designation = 'Travaux en infrastructure'";
+		
+			return $this->db->query($sql)->result();
+		}
+
+		public function findById($table, $colonne, $id){
+			$this->db->where($colonne, $id);
+			return $this->db->get($table)->row();
+		}
+
+		public function delete($table,$colone_id,$id){
+			$this->db->where($colone_id, $id);
+			if($this->db->delete($table)) return true;
+			else return false;
+		}
+		
+		public function update($table, $colone_id, $id, $data){
+			$this->db->where($colone_id, $id);
+			if($this->db->update($table, $data)) return true;
+			else return false;
+		}
+
+
+	
+
+			public function resetDatabase(){
+				$this->load->database();
+		
+				$this->db->query('SET FOREIGN_KEY_CHECKS = 0');
+
+				// Supprimer les données de la table 'type_travaux'
+				$this->db->truncate('type_travaux');
+
+				// Supprimer les données de la table 'unite'
+				$this->db->truncate('unite');
+
+				// Supprimer les données de la table 'travaux'
+				$this->db->truncate('travaux');
+
+				// Supprimer les données de la table 'suivi_travaux'
+				$this->db->truncate('suivi_travaux');
+
+				$this->db->where('type_utilisateur !=', '1');
+        		$this->db->delete('utilisateur');
+
+				// Réactiver les contraintes de clé étrangère
+				$this->db->query('SET FOREIGN_KEY_CHECKS = 1');
+			}
+		
+		
 		public function getAllPlaces() {
 			return $this->db->get('place')->result();
 		}

@@ -87,7 +87,7 @@
                     <a href="javascript:void();" data-target="#messages" data-toggle="pill" class="nav-link"><i class="icon-envelope-open"></i> <span class="hidden-xs">Messages</span></a>
                 </li>
                 <li class="nav-item">
-                    <a href="javascript:void();" data-target="#edit" data-toggle="pill" class="nav-link"><i class="icon-note"></i> <span class="hidden-xs">Edit</span></a>
+                    <a href="javascript:void();" data-target="#edit" data-toggle="pill" class="nav-link">c <span class="hidden-xs">Edit</span></a>
                 </li>
             </ul>
             <div class="tab-content p-3">

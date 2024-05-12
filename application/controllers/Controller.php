@@ -33,6 +33,8 @@ class Controller extends CI_Controller {
 	}
 	public function form()
 	{
+		$data['type_travaux'] = $this->model->findAll('type_travaux', 'designation');
+		$data['unite'] = $this->model->findAll('unite', 'designation');
 		$data['page'] = "forms";
 		$this->load->view('header',$data);
 	}
@@ -50,6 +52,10 @@ class Controller extends CI_Controller {
 	}
 	public function table()
 	{
+		$data['travaux_t']= $this->model->findtravaut();
+		$data['travaux_p']= $this->model->findtravaup();
+		$data['travaux_i']= $this->model->findtravaui();
+
 		$data['page'] = "tables";
 		$this->load->view('header', $data);
 		// echo ("coucou");
@@ -71,6 +77,8 @@ class Controller extends CI_Controller {
 	
 
 	public function validerLogin() {
+		$this->form_validation->set_rules('email', 'Email', 'required');
+		$this->form_validation->set_rules('mdp', 'Mot de passe', 'required');
         try {
             $inputs = $this->input->post();
             $login = $this->model->login($inputs, 'utilisateur');
@@ -87,9 +95,10 @@ class Controller extends CI_Controller {
             else throw new PDOException("Vérifiez votre nom d'utilisateur et mot de passe!!");
         }
         catch(Exception $ex) {
+			if($login == null)
             $data['erreur'] = $ex->getMessage();
             // $data['page']='login';
-			$this->load->view('login');
+			$this->load->view('login', $data);
 			// $this->load->view('header',$data);
         }
     }
@@ -119,13 +128,90 @@ class Controller extends CI_Controller {
 		}
 	}
 
-	
-
 	public function deconnexion() {
         session_destroy();
         $this->load->view('login');
     }
+
+	public function insertion_type_travaux($designation){
+		$designation = $this->input->post();
+		$insert_data = array(
+			'designation' => $designation['designation']
+		);
+
+		$this->model->save('type_travaux', $insert_data);
+		redirect(base_url('controller/form'));
+	}
+
+	public function insertion_travaux(){
+		$input = $this->input->post();
+
+		// Convertir la valeur du prix unitaire en nombre
+		$prix_unitaire = str_replace(',', '.', $input['prix_unitaire']); // Remplacer les virgules par des points pour assurer un format numérique valide
+		$prix_unitaire = (float) $prix_unitaire; // Convertir la chaîne en nombre
+
+		$insert_data = array(
+			'designation' => $input['designation'],
+			'id_unite' => $input['id_unite'],
+			'prix_unitaire' => $prix_unitaire, // Insérer le prix unitaire converti en nombre
+			'id_type_travaux' => $input['id_type_travaux']
+		);
+
+		$this->model->save('travaux', $insert_data);
+		redirect(base_url('controller/form'));
+}
+
+	public function supprimer($id) {
+		$this->model->delete('travaux','id',$id);
+		redirect('Controller/table');
+	}
+
+	public function modification(){
+		// $valeur = null;
+		if(isset($_GET['id'])) {
+			$valeur = $_GET['id'];
+		}
+
+		$data['travaux']=$this->model->findById('travaux','id',$valeur);
+		$data['type_travaux'] = $this->model->findAll('type_travaux', 'designation');
+		$data['unite'] = $this->model->findAll('unite', 'designation');
+		
+		$data['page'] = 'update';
+		$this->load->view('header', $data);
+	}
+
+	public function modifier() {
+		$input = $this->input->post();
+		var_dump($inputs);
+		
+		
+		$prix_unitaire = str_replace(',', '.', $input['prix_unitaire']);
+		$prix_unitaire = (float) $prix_unitaire; 
+
+		$insert_data = array(
+			'designation' => $input['designation'],
+			'id_unite' => $input['id_unite'],
+			'prix_unitaire' => $prix_unitaire,
+			'id_type_travaux' => $input['id_type_travaux']
+		);
 	
+				if ($this->model->update('travaux', 'id', $input['id'], $insert_data)) {
+					redirect(base_url('controller/table'));
+				} else {
+					echo "Erreur lors de la mise à jour.";
+				}
+			}
+
+			public function resetData(){
+				// Appeler la méthode pour réinitialiser les données
+				$this->model->resetDatabase();
+		
+				// Rediriger ou afficher un message de confirmation
+				redirect(base_url('controller/table'));
+			}
+
+			
+
 	public function export_csv_table($id_vente) {
 		// Charger la bibliothèque Database
 		$this->load->database();
