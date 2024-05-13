@@ -11,17 +11,17 @@
 
         <div class="row row-group m-0">
           
-       
+        <?php foreach($somme_total_devis_existant as $tt){ ?>
             <div class="col-12 col-lg-6 col-xl-3 border-light">
-                <div class="card-body">
-                  <h5 class="text-white mb-0"> <span class="float-right"><i class="fa fa-shopping-cart"></i></span></h5>
-                    <div class="progress my-3" style="height:3px;">
-                       <div class="progress-bar" style="width:30%;"></div>
-                    </div>
-                  <p class="mb-0 text-white small-font">Billet vendu <span class="float-right"><i class="zmdi zmdi-long-arrow-up"></i></span></p>
+                <div class="card-body" >
+                <i class="fa fa-money"></i>
+                  <h1 class="text" style="color: #ffd400;" > <span class="float-left"><i class="zmdi zmdi-long-arrow-up"></i>  <?php echo number_format($tt->somme_totale,2). 'Ar' ;?></span></h1>
+                    
+                  <p class="mb-0 text-white small-font"> Montant total des devis <span class="float-right"></span></p>
                 </div>
+                
             </div>
-           
+            <?php }?>
         </div>
 
     </div>

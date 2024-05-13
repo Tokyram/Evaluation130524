@@ -19,7 +19,7 @@ class Controller extends CI_Controller {
 	
 	public function home()
 	{
-
+		$data['somme_total_devis_existant'] = $this->model->somme_total_devis_existant();
 		$data['page'] = "home";
 		$this->load->view('header', $data);
 	}
@@ -88,6 +88,25 @@ class Controller extends CI_Controller {
 		$this->load->view('header', $data);
 		// echo ("coucou");
 	}
+
+	public function table_admin(){
+		$user = $this->session->userdata('utilisateur');
+			$user2 = $this->session->userdata('administrateur');
+			
+			if ($user) {
+				$id_user = $user['id'];
+			} elseif ($user2) {
+				$id_user = $user2['id'];
+			} else {
+				echo "Aucun utilisateur connecté.";
+				return;
+			}
+
+		$data['payement_ajour_restant_payer']= $this->model->payement_ajour_restant_payer_admin();
+
+		$data['page'] = "payement_ajour_restant_payer_admin";
+		$this->load->view('header', $data);
+	}
 	
 	public function liste()
 	{
@@ -138,7 +157,7 @@ class Controller extends CI_Controller {
             if($login != null) {
                 if($login['type_utilisateur'] == 1) {
                     $_SESSION['administrateur'] = $login;
-                    $this->form();
+                    $this->table_admin();
                 }
                 if($login['type_utilisateur'] != 1) {
                     $_SESSION['utilisateur'] = $login;
@@ -151,7 +170,7 @@ class Controller extends CI_Controller {
 			if($login == null)
             $data['erreur'] = $ex->getMessage();
             // $data['page']='login';
-			$this->load->view('login', $data);
+			$this->load->view('login_admin', $data);
 			// $this->load->view('header',$data);
         }
     }
@@ -309,23 +328,56 @@ class Controller extends CI_Controller {
 				'id_user' => $id_user,
 				'date_debut' => $input['date_debut'],
 				'date_fin' => $date_fin_format, // Utilisez la date de fin calculée
+				'date_creation_devis' => $input['date_creation_devis'], // Utilisez la date de fin calculée
 			);
 		
 			$this->model->save('demande_maison_finition', $insert_data);
 			redirect(base_url('controller/liste'));
 		}
 
-		public function payement_devis($id_demande_maison_finition, $payement ,$date_payement){
+		public function payement_devis($id_demande_maison_finition, $payement, $date_payement) {
+			
+			if ($payement < 0) {
+				// Rediriger avec un message d'erreur
+				redirect(base_url('controller/payement_ajour_restant_payer?id=' . $id_demande_maison_finition . '&error=Le montant ne peut pas être négatif'));
+
+			}
+		
+			// Récupérer le montant restant à payer
+			$montant_restant = $this->model->getMontantRestantAPayer($id_demande_maison_finition);
+		
+			// Vérifier si le montant entré est supérieur au montant restant à payer
+			if ($payement > $montant_restant) {
+				// Rediriger avec un message d'erreur
+				redirect(base_url('controller/payement_ajour_restant_payer?id=' . $id_demande_maison_finition. '&error=Le montant entré est supérieur au montant restant à payer'));
+			}
+
 			$insert_data = array(
 				'id_demande_maison_finition' => $id_demande_maison_finition,
 				'montant' => $payement,
-				'date_payemant' => $date_payement
+				'date_payement' => $date_payement
 			);
-
+		
 			$this->model->save('historique_payement', $insert_data);
-			redirect(base_url('controller/table_client'));
+			// Rediriger vers la page de la table des clients en passant l'ID
+			redirect(base_url('controller/payement_ajour_restant_payer?id=' . $id_demande_maison_finition));
 
 		}
+
+		public function payement_ajour_restant_payer(){
+			$id = $this->input->get('id');
+			$data['payement_ajour_restant_payer']= $this->model->payement_ajour_restant_payer($id);
+			$data['page'] = 'payement_ajour_restant_payer';
+			$this->load->view('header', $data);
+		}
+
+		public function payement_ajour_restant_payer_admin(){
+			$id = $this->input->get('id');
+			$data['payement_ajour_restant_payer']= $this->model->payement_ajour_restant_payer_admin($id);
+			$data['page'] = 'payement_ajour_restant_payer_admin';
+			$this->load->view('header', $data);
+		}
+		
 		public function details_devis_user() {
 			$id = $this->input->get('id');
 			// var_dump($id);
@@ -334,7 +386,15 @@ class Controller extends CI_Controller {
 			$data['page'] = 'table_details_devis_client';
 			$this->load->view('header', $data);
 		}
-		
+
+		public function details_devis_admin() {
+			$id = $this->input->get('id');
+			// var_dump($id);
+			$data['details_devis'] = $this->model->find_details_devis_client2($id);
+			$data['id'] = $id; // Passer l'ID à la vue
+			$data['page'] = 'table_details_devis_admin';
+			$this->load->view('header', $data);
+		}
 		
 		public function generate_pdf() {
 			$id = $this->input->get('id');
@@ -364,9 +424,6 @@ class Controller extends CI_Controller {
 		}
 		
 		
-		
-		
-
 	public function export_csv_table($id_vente) {
 		// Charger la bibliothèque Database
 		$this->load->database();

@@ -42,7 +42,7 @@
                 <tbody>
                 <?php foreach($details_devis as $tt){ ?>
                   <tr>
-                    <th>v</th>
+                    <th><?php echo $tt->designation_travaux;?></th>
                     <th><?php echo $tt->designation_travaux;?></th>
                     <td><?php echo $tt->unite_travaux;?></td>
                     <td><?php echo $tt->quantite_detail_devis;?></td>
@@ -66,9 +66,7 @@
             <div class="col-lg-12">
             
                     
-            <a href="<?= base_url('Controller/generate_pdf?id=' . $id );?>" class="btn btn-primary">Exporter en PDF</a>
-            <!-- <?php echo $id;?> -->
-
+          
 
 
 

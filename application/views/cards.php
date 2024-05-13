@@ -92,20 +92,28 @@
               <br>
               <br>
               <br>
+              <div class="date" style="display:flex; align-items:center; width: 1000px ;height:auto; justify-content:space-between;">
 
-              <d class="form-group">
-              <h4 class="d-inline">Choisir un date de commencement du projet</h4>
-              <br></br>
-                    <input type="date" name="date_debut" class="form-control form-control-rounded" id="input-7">
+             
+                  <div class="form-group">
+                  <h4 class="d-inline">Choisir un date de commencement du projet</h4>
+                  <br></br>
+                        <input type="date" name="date_debut" class="form-control form-control-rounded" id="input-7">
+                  </div>
+
+                  <div class="form-group">
+                  <h4 class="d-inline">Choisir un date de Creation devis</h4>
+                  <br></br>
+                        <input type="date" name="date_creation_devis" class="form-control form-control-rounded" id="input-7">
+                  </div>
+
               </div>
-
               <br>
               <br>
               <br>
               <br>
-              
-            <div class="form-group" style="margin-top:1000px;margin-left: 200px;">
-              <button type="submit" style=" color:#000000;background-color: #ffd400;" class="btn btn-light btn-round px-5 "><i class="icon-lock"></i> Valider la demande</button>
+            <div class="form-group" >
+              <button type="submit" style="width:250px; color:#000000;background-color: #ffd400;" class="btn btn-light btn-round px-5 "><i class="icon-lock"></i> Valider la demande</button>
             </div>
           </form>
 

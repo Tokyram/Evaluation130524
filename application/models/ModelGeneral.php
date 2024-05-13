@@ -194,7 +194,103 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 		
 			return $this->db->query($sql)->result();
 		}
+
+		public function payement_ajour_restant_payer($id){
+				$sql = "SELECT 
+				dm.id AS id_demande,
+				dm.id_user,
+				(SELECT SUM(prix_total) FROM details_devis WHERE id_devis = d.id) AS somme_prix_total,
+				(SELECT pourcentage FROM finition WHERE id = dm.id_finition) AS pourcentage_augmentation,
+				(SELECT 
+					((SELECT SUM(prix_total) FROM details_devis WHERE id_devis = d.id) * (1 + (SELECT pourcentage FROM finition WHERE id = dm.id_finition) / 100)) 
+				) AS nouveau_prix_total,
+				COALESCE(
+					(SELECT 
+						((SELECT SUM(prix_total) FROM details_devis WHERE id_devis = d.id) * (1 + (SELECT pourcentage FROM finition WHERE id = dm.id_finition) / 100)) 
+					) 
+					- (SELECT SUM(montant) FROM historique_payement WHERE id_demande_maison_finition = dm.id), 
+				(SELECT 
+						((SELECT SUM(prix_total) FROM details_devis WHERE id_devis = d.id) * (1 + (SELECT pourcentage FROM finition WHERE id = dm.id_finition) / 100)) 
+					)
+				) AS montant_restant,
+				(SELECT SUM(montant) FROM historique_payement WHERE id_demande_maison_finition = dm.id) AS montant_payé
+			FROM 
+				demande_maison_finition dm
+			JOIN 
+				devis d ON dm.id_maison = d.id_maison
+			WHERE 
+				dm.id = '$id'";
+
+	
+		return $this->db->query($sql)->result();
+	}
+
+	public function getMontantRestantAPayer($id_demande_maison_finition) {
+		$sql = "SELECT 
+					((SELECT SUM(prix_total) FROM details_devis WHERE id_devis = d.id) * (1 + (SELECT pourcentage FROM finition WHERE id = dm.id_finition) / 100)) AS nouveau_prix_total,
+					COALESCE(
+						(SELECT 
+							((SELECT SUM(prix_total) FROM details_devis WHERE id_devis = d.id) * (1 + (SELECT pourcentage FROM finition WHERE id = dm.id_finition) / 100)) 
+						) 
+						- (SELECT SUM(montant) FROM historique_payement WHERE id_demande_maison_finition = dm.id), 
+					(SELECT 
+							((SELECT SUM(prix_total) FROM details_devis WHERE id_devis = d.id) * (1 + (SELECT pourcentage FROM finition WHERE id = dm.id_finition) / 100)) 
+						)
+					) AS montant_restant
+				FROM 
+					demande_maison_finition dm
+				JOIN 
+					devis d ON dm.id_maison = d.id_maison
+				WHERE 
+					dm.id = ?";
 		
+		$query = $this->db->query($sql, array($id_demande_maison_finition));
+		$result = $query->row();
+	
+		// Si le résultat est vide, cela signifie qu'il n'y a pas de demande correspondante
+		if (empty($result)) {
+			return 0;
+		}
+	
+		// Sinon, retourner le montant restant à payer
+		return $result->montant_restant;
+	}
+	
+	public function payement_ajour_restant_payer_admin(){
+		$sql = "SELECT 
+					dm.id AS id_demande,
+					dm.id_user,
+					u.nom AS nom_utilisateur,
+					tm.nom_maison AS nom_type_maison,
+					(SELECT SUM(prix_total) FROM details_devis WHERE id_devis = d.id) AS somme_prix_total,
+					(SELECT pourcentage FROM finition WHERE id = dm.id_finition) AS pourcentage_augmentation,
+					(SELECT 
+						((SELECT SUM(prix_total) FROM details_devis WHERE id_devis = d.id) * (1 + (SELECT pourcentage FROM finition WHERE id = dm.id_finition) / 100)) 
+					) AS nouveau_prix_total,
+					COALESCE(
+						(SELECT 
+							((SELECT SUM(prix_total) FROM details_devis WHERE id_devis = d.id) * (1 + (SELECT pourcentage FROM finition WHERE id = dm.id_finition) / 100)) 
+						) 
+						- (SELECT SUM(montant) FROM historique_payement WHERE id_demande_maison_finition = dm.id), 
+					(SELECT 
+							((SELECT SUM(prix_total) FROM details_devis WHERE id_devis = d.id) * (1 + (SELECT pourcentage FROM finition WHERE id = dm.id_finition) / 100)) 
+						)
+					) AS montant_restant,
+					(SELECT SUM(montant) FROM historique_payement WHERE id_demande_maison_finition = dm.id) AS montant_payé
+				FROM 
+					demande_maison_finition dm
+				JOIN 
+					devis d ON dm.id_maison = d.id_maison
+				JOIN 
+					utilisateur u ON dm.id_user = u.id
+				JOIN 
+					maison m ON dm.id_maison = m.id
+				JOIN 
+					type_maison tm ON m.id_type_maison = tm.id";
+	
+		return $this->db->query($sql)->result();
+	}
+	
 
 			public function resetDatabase(){
 				$this->load->database();
@@ -256,6 +352,22 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 					JOIN film f on d.id_film = f.id
 					JOIN salle s on d.id_salle = s.id
 					JOIN place p ON vd.id_place = p.id
+					";
+
+			return $this->db->query($sql)->result();
+		}
+
+		public function somme_total_devis_existant(){
+			$sql = "SELECT 
+							SUM(nouveau_prix_total) AS somme_totale
+						FROM 
+							(SELECT 
+								((SELECT SUM(prix_total) FROM details_devis WHERE id_devis = d.id) * (1 + (SELECT pourcentage FROM finition WHERE id = dm.id_finition) / 100)) AS nouveau_prix_total
+							FROM 
+								demande_maison_finition dm
+							JOIN 
+								devis d ON dm.id_maison = d.id_maison) AS subquery;
+		
 					";
 
 			return $this->db->query($sql)->result();

@@ -16,35 +16,41 @@
         <div class="col-lg-12">
           <div class="card">
             <div class="card-body">
-              <h5 class="card-title">Devis</h5>
+              <h5 class="card-title">LISTE DES PAYEMEMT</h5>
 			  <div class="table-responsive">
+
+              <?php if(isset($_GET['error'])): ?>
+                    <div class="alert alert-danger" role="alert">
+                        <?php echo $_GET['error']; ?>
+                    </div>
+            <?php endif; ?>
+
               <table class="table table-hover">
                 <thead>
                   <tr  style="color: #ffd400;">
-                    <th scope="col">Maison</th>
-                    <th scope="col">Finition</th>
-                    <th scope="col">Date debut</th>
-                    <th scope="col">Date fin</th>
+                    <th scope="col">Devis</th>
+                    <th scope="col">Client</th>
+                    <th scope="col">Prix total</th>
+                    <th scope="col">Montant payé</th>
                     <th scope="col">Reste a payer</th>
                     <th scope="col">Action</th>
 
                   </tr>
                 </thead>
                 <tbody>
-                <?php foreach($demande_maison_finition_client as $tt){ ?>
-                    <tr>
-                        <th><?php echo $tt->nom_maison;?></th>
-                        <td><?php echo $tt->designation;?></td>
-                        <td><?php echo date_format(date_create($tt->date_debut), 'd F Y');?></td>
-                        <td><?php echo date_format(date_create($tt->date_fin), 'd F Y');?></td>
-                        <td><?php echo number_format($tt->nouveau_prix_total, 2).'Ar';?> </td>
-                        <td style="float:right;">
-                            <a href="<?= base_url('Controller/payement_ajour_restant_payer?id=' . $tt->id) ?>" onclick="openPopup(<?= $tt->id ?>)" class="btn btn-light btn-round px-5">Proceder au payement</a>
-                            <a style="background-color: red; border:none;" href="<?= base_url('Controller/details_devis_user?id=' . $tt->id) ?>" class="btn btn-light btn-round px-5">Voir détails du Devis</a>
-                        </td>
-                    </tr>
-                <?php }?>
-
+                <?php foreach($payement_ajour_restant_payer as $tt){ ?>
+                  <tr>
+                    <th>Devis <?php echo $tt->id_demande ;?></th>
+                    <th><?php echo $tt->nom_utilisateur ;?></th>
+                    <td><?php echo number_format($tt->nouveau_prix_total,2). 'Ar';?></td>
+                    <td><?php echo number_format($tt->montant_payé,2). 'Ar';?></td>
+                    <td ><p style=" display:flex;justify-content:center; font-weight:bolder; background-color:#ffd400;padding:10px; color:black; border-radius:5px;"><?php echo number_format($tt->montant_restant,2). 'Ar';?></p></td>
+                    <td style="float:right;">
+                      <a href="<?= base_url('Controller/details_devis_admin?id=' . $tt->id_demande) ?>"  class="btn btn-light btn-round px-5">Voir la liste des traveaux a effectuer</a>
+                       
+                    </td>
+                  </tr>
+                  <?php }?>
                  
                 </tbody>
               </table>

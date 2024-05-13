@@ -70,7 +70,7 @@
 		   </div>
 		  </div>
 		  <div class="card-footer text-center py-3">
-		    <p class="text-warning mb-0">Do not have an account? <a href="<?=base_url("Controller/login_admin");?>"> Sign Up here</a></p>
+		    <p class="text-warning mb-0">another account? <a href="<?=base_url("Controller/login_admin");?>"> Sign in Admin</a></p>
 		  </div>
 	     </div>
     

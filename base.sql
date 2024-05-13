@@ -302,3 +302,29 @@ JOIN travaux t ON dd.id_travaux = t.id
 JOIN unite u ON t.id_unite = u.id
 WHERE dd.id_devis = 3;
 
+
+-- calcule montant_restant pour la demande_maison_finiti
+SELECT 
+    dm.id AS id_demande,
+    dm.id_user,
+    (SELECT SUM(prix_total) FROM details_devis WHERE id_devis = d.id) AS somme_prix_total,
+    (SELECT pourcentage FROM finition WHERE id = dm.id_finition) AS pourcentage_augmentation,
+    (SELECT 
+        ((SELECT SUM(prix_total) FROM details_devis WHERE id_devis = d.id) * (1 + (SELECT pourcentage FROM finition WHERE id = dm.id_finition) / 100)) 
+    ) AS nouveau_prix_total,
+    COALESCE(
+        (SELECT 
+            ((SELECT SUM(prix_total) FROM details_devis WHERE id_devis = d.id) * (1 + (SELECT pourcentage FROM finition WHERE id = dm.id_finition) / 100)) 
+        ) 
+        - (SELECT SUM(montant) FROM historique_payement WHERE id_demande_maison_finition = dm.id), 
+    (SELECT 
+            ((SELECT SUM(prix_total) FROM details_devis WHERE id_devis = d.id) * (1 + (SELECT pourcentage FROM finition WHERE id = dm.id_finition) / 100)) 
+        )
+    ) AS montant_restant,
+    (SELECT SUM(montant) FROM historique_payement WHERE id_demande_maison_finition = dm.id) AS montant_payé
+FROM 
+    demande_maison_finition dm
+JOIN 
+    devis d ON dm.id_maison = d.id_maison
+WHERE 
+    dm.id = 1;

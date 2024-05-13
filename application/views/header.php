@@ -62,7 +62,7 @@
 
       <li>
         <a href="<?=base_url('Controller/liste')?>">
-          <i class="zmdi zmdi-invert-colors"></i> <span>Liste</span>
+          <i class="zmdi zmdi-invert-colors"></i> <span>Creation devis</span>
         </a>
       </li>
 
@@ -72,30 +72,37 @@
         </a>
       </li>
 
-      
+      <?php if(isset($_SESSION['utilisateur'])) {?>
       <li>
         <a href="<?=base_url('Controller/table_client')?>">
           <i class="zmdi zmdi-grid"></i> <span>Liste demande de Devis</span>
         </a>
       </li>
-      
-
+      <?php }?>
       <?php if(!isset($_SESSION['utilisateur'])) {?>
+      <li>
+        <a href="<?=base_url('Controller/table_admin')?>">
+          <i class="zmdi zmdi-grid"></i> <span>Liste demande de Devis</span>
+        </a>
+      </li>
+      <?php }?>
+
+      <!-- <?php if(!isset($_SESSION['utilisateur'])) {?>
       <li>
         <a href="<?=base_url('Controller/table')?>">
           <i class="zmdi zmdi-grid"></i> <span>Liste de travaux</span>
         </a>
       </li>
-      <?php }?>
+      <?php }?> -->
       
-      <li>
+      <!-- <li>
         <a href="<?=base_url('Controller/calendar')?>">
           <i class="zmdi zmdi-calendar-check"></i> <span>Calendar</span>
           <small class="badge float-right badge-light">New</small>
         </a>
-      </li>
+      </li> -->
 
-      <li>
+      <!-- <li>
         <a href="<?=base_url('Controller/profil')?>">
           <i class="zmdi zmdi-face"></i> <span>Profile</span>
         </a>
@@ -105,11 +112,11 @@
         <a href="<?=base_url('Controller/login')?>" target="_blank">
           <i class="zmdi zmdi-lock"></i> <span>Login</span>
         </a>
-      </li>
+      </li> -->
 
        <li>
-        <a href="<?=base_url('Controller/register')?>" target="_blank">
-          <i class="zmdi zmdi-account-circle"></i> <span>Registration</span>
+        <a href="<?=base_url('Controller/deconnexion')?>" target="_blank">
+          <i class="zmdi zmdi-account-circle"></i> <span>Deconnexion</span>
         </a>
       </li>
 
@@ -198,7 +205,7 @@
 <!--End topbar header-->
    
     <?php include($page.".php") ?>
-    <!-- <?php include("footer.php") ?> -->
+    <?php include("footer.php") ?>
 
 
 
