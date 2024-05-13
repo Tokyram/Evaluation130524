@@ -287,4 +287,18 @@ JOIN utilisateur u ON dm.id_user = u.id
 JOIN devis d ON dm.id_maison = d.id_maison
 WHERE dm.id_user = 2;
 
+-- avoir les details devis where id_devis
+SELECT dd.id AS id_detail_devis, 
+       t.id AS id_travaux,
+       t.designation AS designation_travaux,
+       t.prix_unitaire AS prix_unitaire_travaux,
+       t.id_unite AS id_unite_travaux,
+       u.designation AS designation_unite_travaux,
+       dd.quantite AS quantite_detail_devis,
+       dd.prix_unitaire AS prix_unitaire_detail_devis,
+       dd.prix_total AS prix_total_detail_devis
+FROM details_devis dd
+JOIN travaux t ON dd.id_travaux = t.id
+JOIN unite u ON t.id_unite = u.id
+WHERE dd.id_devis = 3;
 

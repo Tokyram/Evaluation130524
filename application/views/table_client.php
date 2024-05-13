@@ -31,17 +31,28 @@
                   </tr>
                 </thead>
                 <tbody>
-                <?php foreach($devis_client as $tt){ ?>
+                <?php foreach($demande_maison_finition_client as $tt){ ?>
                   <tr>
-                    <th></th>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                    <th><?php echo $tt->nom_maison;?></th>
+                    <td><?php echo $tt->designation;?></td>
+                    <td><?php echo $tt->date_debut;?></td>
+                    <td><?php echo $tt->date_fin;?></td>
+                    <td><?php echo number_format($tt->nouveau_prix_total,2).'Ar';?> </td>
                     <td style="float:right;">
-                      <a href="<?= base_url('Controller/payement_devis_user?id=' . $tt->id) ?>" class="btn btn-light btn-round px-5"><i class="icon-note"></i></a>
-                    
-                      <a style="background-color: red; border:none;" href="<?= base_url('Controller/details_devis_user/' .$tt->id) ?>" class="btn btn-light btn-round px-5">Supprimer</i></a>
+                      <a href="#" onclick="openPopup(<?= $tt->id ?>)" class="btn btn-light btn-round px-5">Payer</a>
+                        <br>
+                      <div id="popup<?= $tt->id ?>" style="display: none;border: 1px solid white; border-radius:10px ;padding:10px; margin:20px;">
+                        <h2>Entrez le prix à payer</h2>
+                        <p>Montant :</p>
+                        <input class="form-control form-control-rounded" type="text" id="payement<?= $tt->id ?>" placeholder="Montant"> 
+                        <br>
+                        <p>Entrez la date :</p>
+                        <input class="form-control form-control-rounded" type="date" id="date_payement<?= $tt->id ?>" placeholder="Date de payement"> 
+                        <br>
+                        <button style="background-color:#ffd400;" class="btn btn-light btn-round px-5" onclick="payement(<?= $tt->id ?>)">Envoyer</button>
+                    </div>
+                        <br>
+                      <a style="background-color: red; border:none;" href="<?= base_url('Controller/details_devis_user?id=' . $tt->id) ?>" class="btn btn-light btn-round px-5">Voir détails du Devis</a>
                     </td>
                   </tr>
                   <?php }?>
@@ -68,3 +79,18 @@
     <a href="javaScript:void();" class="back-to-top"><i class="fa fa-angle-double-up"></i> </a>
     <!--End Back To Top Button-->
 	
+    <script>
+    function openPopup(id) {
+        document.getElementById('popup' + id).style.display = 'block';
+        document.getElementById('id').value = id;
+    }   
+
+    function payement(id) {
+        var payement = document.getElementById('payement' + id).value;
+        var date_payement = document.getElementById('date_payement' + id).value;
+        var baseUrl = "<?php echo base_url('Controller/payement_devis/'); ?>";
+
+        // Rediriger vers la fonction payementbillet avec l'ID de la vente et le montant du paiement
+        window.location.href = baseUrl + '/' + id + '/' + payement + '/' + date_payement + '/' ;
+    }
+</script>

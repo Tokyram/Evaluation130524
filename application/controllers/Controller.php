@@ -69,7 +69,20 @@ class Controller extends CI_Controller {
 
 	public function table_client()
 	{
-		// $data['devis_client']= $this->model->find_devis_client();
+
+		$user = $this->session->userdata('utilisateur');
+			$user2 = $this->session->userdata('administrateur');
+			
+			if ($user) {
+				$id_user = $user['id'];
+			} elseif ($user2) {
+				$id_user = $user2['id'];
+			} else {
+				echo "Aucun utilisateur connecté.";
+				return;
+			}
+
+		$data['demande_maison_finition_client']= $this->model->find_demande_maison_finition($id_user);
 
 		$data['page'] = "table_client";
 		$this->load->view('header', $data);
@@ -301,6 +314,57 @@ class Controller extends CI_Controller {
 			$this->model->save('demande_maison_finition', $insert_data);
 			redirect(base_url('controller/liste'));
 		}
+
+		public function payement_devis($id_demande_maison_finition, $payement ,$date_payement){
+			$insert_data = array(
+				'id_demande_maison_finition' => $id_demande_maison_finition,
+				'montant' => $payement,
+				'date_payemant' => $date_payement
+			);
+
+			$this->model->save('historique_payement', $insert_data);
+			redirect(base_url('controller/table_client'));
+
+		}
+		public function details_devis_user() {
+			$id = $this->input->get('id');
+			// var_dump($id);
+			$data['details_devis'] = $this->model->find_details_devis_client2($id);
+			$data['id'] = $id; // Passer l'ID à la vue
+			$data['page'] = 'table_details_devis_client';
+			$this->load->view('header', $data);
+		}
+		
+		
+		public function generate_pdf() {
+			$id = $this->input->get('id');
+			// var_dump($id);
+			// Récupérer les détails du devis pour l'ID donné
+			$data['details'] = $this->model->find_details_devis_client2($id);
+			
+			// Charger la bibliothèque PDF
+			$this->load->library('pdf');
+		
+			// Générer le contenu HTML du PDF en utilisant une vue spécifique
+			$html = $this->load->view('details_devis_client_pdf', $data, true);
+		
+			// Charger le contenu HTML dans la bibliothèque PDF
+			$this->pdf->load_html($html);
+			$this->pdf->render();
+		
+			// Récupérer le PDF en tant que chaîne de caractères
+			$output = $this->pdf->output();
+		
+			// Envoyer le PDF en tant que téléchargement
+			$filename = 'details_devis_' . $id . '.pdf';
+			header('Content-Type: application/pdf');
+			header('Content-Disposition: attachment; filename="' . $filename . '"');
+			header('Content-Length: ' . strlen($output));
+			echo $output;
+		}
+		
+		
+		
 		
 
 	public function export_csv_table($id_vente) {
@@ -364,47 +428,6 @@ class Controller extends CI_Controller {
 		}
 	}
 	
-
-	public function pdf_export($id_vente) {
-		// Charger la bibliothèque Database
-		$this->load->database();
-	
-		// Exécuter la requête SQL pour obtenir les données spécifiques à cette vente
-		$query = $this->db->query("SELECT vd.id as id_vente, f.nom_film, t.montant as tarif, p.colonne, p.ligne, d.date_diffusion, d.heure_diffusion, s.nom_salle 
-									FROM vente_billet vd
-									JOIN tarif t ON vd.type_tarif = t.type_tarif
-									JOIN diffusion d ON vd.id_diffusion = d.id
-									JOIN film f ON d.id_film = f.id
-									JOIN salle s ON d.id_salle = s.id
-									JOIN place p ON vd.id_place = p.id
-									WHERE vd.id = ?", array($id_vente));
-	
-		// Vérifier si la requête a retourné des résultats
-		if ($query->num_rows() > 0) {
-			// Récupérer les résultats de la requête
-			$data['vente'] = $query->row_array();
-	
-			// Charger la bibliothèque PDF
-			$this->load->library('pdf');
-	
-			// Générer le PDF avec les données spécifiques à cette vente
-			$html = $this->load->view('vente_detailes', $data, true); // Assurez-vous que vous avez une vue nommée vente_details pour afficher les détails de la vente
-			$dompdf = new PDF();
-			$dompdf->load_html($html);
-			$dompdf->render();
-			$output = $dompdf->output();
-			file_put_contents('vente_' . $id_vente . '.pdf', $output);
-			redirect(base_url('controller/panier'));
-		} else {
-			echo "error";
-		}
-	}
-	
-	
-	
-
-	
-
 
 	
 }

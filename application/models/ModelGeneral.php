@@ -110,14 +110,87 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 		}
 
 		public function find_demande_maison_finition($id){
-			$sql = "SELECT dm.id, u.nom AS nom_utilisateur, u.prenom AS prenom_utilisateur, dm.date_debut, dm.date_fin, tm.nom_maison, f.designation, d.designation AS designation_devis
-					FROM demande_maison_finition dm
-					JOIN maison m ON dm.id_maison = m.id
-					JOIN finition f ON dm.id_finition = f.id
-					JOIN type_maison tm ON m.id_type_maison = tm.id
-					JOIN utilisateur u ON dm.id_user = u.id
-					JOIN devis d ON dm.id_maison = d.id_maison
-					WHERE dm.id_user = $id ";
+			$sql = "SELECT 
+						dm.id, 
+						u.nom AS nom_utilisateur, 
+						u.prenom AS prenom_utilisateur, 
+						dm.date_debut, 
+						dm.date_fin, 
+						tm.nom_maison, 
+						f.designation, 
+						d.designation AS designation_devis,
+						(SELECT SUM(prix_total) FROM details_devis WHERE id_devis = d.id) AS somme_prix_total,
+						(SELECT pourcentage FROM finition WHERE id = dm.id_finition) AS pourcentage_augmentation,
+						((SELECT SUM(prix_total) FROM details_devis WHERE id_devis = d.id) * (1 + (SELECT pourcentage FROM finition WHERE id = dm.id_finition) / 100)) AS nouveau_prix_total
+					FROM 
+						demande_maison_finition dm
+					JOIN 
+						maison m ON dm.id_maison = m.id
+					JOIN 
+						finition f ON dm.id_finition = f.id
+					JOIN 
+						type_maison tm ON m.id_type_maison = tm.id
+					JOIN 
+						utilisateur u ON dm.id_user = u.id
+					JOIN 
+						devis d ON dm.id_maison = d.id_maison
+					WHERE dm.id_user = $id";
+		
+			return $this->db->query($sql)->result();
+		}
+		
+
+		public function find_details_devis_client($id){
+			
+			$sql = "SELECT dd.id AS id_detail_devis, 
+						   t.id AS id_travaux,
+						   t.designation AS designation_travaux,
+						   t.prix_unitaire AS prix_unitaire_travaux,
+						   t.id_unite AS id_unite_travaux,
+						   u.designation AS designation_unite_travaux,
+						   dd.quantite AS quantite_detail_devis,
+						   dd.prix_unitaire AS prix_unitaire_detail_devis,
+						   dd.prix_total AS prix_total_detail_devis,
+						   (SELECT SUM(prix_total) FROM details_devis WHERE id_devis = $id) AS somme_prix_total
+					FROM details_devis dd
+					JOIN travaux t ON dd.id_travaux = t.id
+					JOIN unite u ON t.id_unite = u.id
+					WHERE dd.id_devis = $id";
+		
+			return $this->db->query($sql)->result();
+		}
+		
+		public function find_details_devis_client2($id){
+			
+				$sql = "SELECT 
+							dm.id AS id_demande,
+							u.nom AS nom_utilisateur,
+							u.prenom AS prenom_utilisateur,
+							dm.date_debut,
+							dm.date_fin,
+							tm.nom_maison,
+							f.designation AS designation_finition,
+							d.designation AS designation_devis,
+							(SELECT SUM(prix_total) FROM details_devis WHERE id_devis = d.id) AS somme_prix_total_devis,
+							(SELECT pourcentage FROM finition WHERE id = dm.id_finition) AS pourcentage_augmentation,
+							((SELECT SUM(prix_total) FROM details_devis WHERE id_devis = d.id) * (1 + (SELECT pourcentage FROM finition WHERE id = dm.id_finition) / 100)) AS nouveau_prix_total_devis,
+							dd.id AS id_detail_devis,
+							t.designation AS designation_travaux,
+							t.prix_unitaire AS prix_unitaire_travaux,
+							u2.designation AS unite_travaux,
+							dd.quantite AS quantite_detail_devis,
+							dd.prix_unitaire AS prix_unitaire_detail_devis,
+							dd.prix_total AS prix_total_detail_devis
+						FROM demande_maison_finition dm
+						JOIN maison m ON dm.id_maison = m.id
+						JOIN finition f ON dm.id_finition = f.id
+						JOIN type_maison tm ON m.id_type_maison = tm.id
+						JOIN utilisateur u ON dm.id_user = u.id
+						JOIN devis d ON dm.id_maison = d.id_maison
+						JOIN details_devis dd ON d.id = dd.id_devis
+						JOIN travaux t ON dd.id_travaux = t.id
+						JOIN unite u2 ON t.id_unite = u2.id
+						WHERE dm.id = $id";
 		
 			return $this->db->query($sql)->result();
 		}
