@@ -45,7 +45,7 @@
    <div id="sidebar-wrapper" data-simplebar="" data-simplebar-auto-hide="true">
      <div class="brand-logo">
       <a href="index.html">
-       <img src="<?=base_url('assets/images/logo-icon.png')?>" class="logo-icon" alt="logo icon">
+       <img style="width: 60px; border-radius: 3px" src="<?=base_url('assets/images/logo-icon2.png')?>" class="logo-icon" alt="logo icon">
        <h5 class="logo-text">CONTRUCTION</h5>
      </a>
    </div>
@@ -72,12 +72,22 @@
         </a>
       </li>
 
+      
+      <li>
+        <a href="<?=base_url('Controller/table_client')?>">
+          <i class="zmdi zmdi-grid"></i> <span>Liste demande de Devis</span>
+        </a>
+      </li>
+      
+
+      <?php if(!isset($_SESSION['utilisateur'])) {?>
       <li>
         <a href="<?=base_url('Controller/table')?>">
           <i class="zmdi zmdi-grid"></i> <span>Liste de travaux</span>
         </a>
       </li>
-
+      <?php }?>
+      
       <li>
         <a href="<?=base_url('Controller/calendar')?>">
           <i class="zmdi zmdi-calendar-check"></i> <span>Calendar</span>
@@ -188,7 +198,7 @@
 <!--End topbar header-->
    
     <?php include($page.".php") ?>
-    <?php include("footer.php") ?>
+    <!-- <?php include("footer.php") ?> -->
 
 
 

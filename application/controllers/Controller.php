@@ -27,6 +27,11 @@ class Controller extends CI_Controller {
 	{
 		$this->load->view('login');
 	}
+
+	public function login_admin()
+	{
+		$this->load->view('login_admin');
+	}
 	public function register()
 	{
 		$this->load->view('register');
@@ -55,8 +60,18 @@ class Controller extends CI_Controller {
 		$data['travaux_t']= $this->model->findtravaut();
 		$data['travaux_p']= $this->model->findtravaup();
 		$data['travaux_i']= $this->model->findtravaui();
+		$data['travauxx']= $this->model->findtravau();
 
 		$data['page'] = "tables";
+		$this->load->view('header', $data);
+		// echo ("coucou");
+	}
+
+	public function table_client()
+	{
+		// $data['devis_client']= $this->model->find_devis_client();
+
+		$data['page'] = "table_client";
 		$this->load->view('header', $data);
 		// echo ("coucou");
 	}
@@ -64,6 +79,8 @@ class Controller extends CI_Controller {
 	public function liste()
 	{
 		$data['page'] = "cards";
+		$data['finition']= $this->model->findAll3('finition','id', 'designation', 'pourcentage');
+		$data['devis_maison']= $this->model->findAll10('somme_prix_devis_maison','id_devis','id_maison', 'designation_devis', 'nom_maison', 'somme_prix_total', 'duree_maison', 'nombre_chambres' , 'nombre_cuisines' ,'nombre_salons', 'nombre_toilettes');
 		$this->load->view('header', $data);
 		
 	}
@@ -77,11 +94,34 @@ class Controller extends CI_Controller {
 	
 
 	public function validerLogin() {
-		$this->form_validation->set_rules('email', 'Email', 'required');
+		$this->form_validation->set_rules('telephone', 'Numero de telephone', 'required');
 		$this->form_validation->set_rules('mdp', 'Mot de passe', 'required');
         try {
             $inputs = $this->input->post();
             $login = $this->model->login($inputs, 'utilisateur');
+            if($login != null) {
+                if($login['type_utilisateur'] != 1) {
+                    $_SESSION['utilisateur'] = $login;
+                    $this->liste();
+                }
+            }
+            else throw new PDOException("Vérifiez votre numero");	
+        }
+        catch(Exception $ex) {
+			if($login == null)
+            $data['erreur'] = $ex->getMessage();
+            // $data['page']='login';
+			$this->load->view('login', $data);
+			// $this->load->view('header',$data);
+        }
+    }
+	
+	public function validerLogin_admin() {
+		$this->form_validation->set_rules('email', 'Adresse email', 'required');
+		$this->form_validation->set_rules('mdp', 'Mot de passe', 'required');
+        try {
+            $inputs = $this->input->post();
+            $login = $this->model->login_admin($inputs, 'utilisateur');
             if($login != null) {
                 if($login['type_utilisateur'] == 1) {
                     $_SESSION['administrateur'] = $login;
@@ -92,7 +132,7 @@ class Controller extends CI_Controller {
                     $this->liste();
                 }
             }
-            else throw new PDOException("Vérifiez votre nom d'utilisateur et mot de passe!!");
+            else throw new PDOException("Vérifiez votre email ou mot de passe!!");
         }
         catch(Exception $ex) {
 			if($login == null)
@@ -182,7 +222,7 @@ class Controller extends CI_Controller {
 
 	public function modifier() {
 		$input = $this->input->post();
-		var_dump($inputs);
+		var_dump($input);
 		
 		
 		$prix_unitaire = str_replace(',', '.', $input['prix_unitaire']);
@@ -202,15 +242,66 @@ class Controller extends CI_Controller {
 				}
 			}
 
-			public function resetData(){
-				// Appeler la méthode pour réinitialiser les données
-				$this->model->resetDatabase();
-		
-				// Rediriger ou afficher un message de confirmation
-				redirect(base_url('controller/table'));
-			}
+		public function resetData(){
+			// Appeler la méthode pour réinitialiser les données
+			$this->model->resetDatabase();
+	
+			// Rediriger ou afficher un message de confirmation
+			redirect(base_url('controller/table'));
+		}
 
+		public function insertion_demande_maison_finition(){
+			$input = $this->input->post();
+			// var_dump($input);
+		
+			$user = $this->session->userdata('utilisateur');
+			$user2 = $this->session->userdata('administrateur');
 			
+			if ($user) {
+				$id_user = $user['id'];
+			} elseif ($user2) {
+				$id_user = $user2['id'];
+			} else {
+				echo "Aucun utilisateur connecté.";
+				return;
+			}
+		
+			// Récupérer la durée du projet en jours à partir de la table type_maison
+			$this->db->select('duree');
+			$this->db->from('type_maison');
+			$this->db->where('id', $input['selected_maison']);
+			$query = $this->db->get();
+			$result = $query->row();
+		
+			if ($result) {
+				$duree_projet = $result->duree;
+			} else {
+				// Gérer le cas où la durée du projet n'est pas trouvée
+				echo "La durée du projet n'a pas été trouvée.";
+				return;
+			}
+		
+			// Convertir la date de début en objet DateTime
+			$date_debut = new DateTime($input['date_debut']);
+		
+			// Ajouter la durée du projet en jours à la date de début
+			$date_fin = $date_debut->add(new DateInterval('P'.$duree_projet.'D'));
+		
+			// Formatage de la date de fin
+			$date_fin_format = $date_fin->format('Y-m-d');
+		
+			$insert_data = array(
+				'id_maison' => $input['selected_maison'],
+				'id_finition' => $input['selected_finition'],
+				'id_user' => $id_user,
+				'date_debut' => $input['date_debut'],
+				'date_fin' => $date_fin_format, // Utilisez la date de fin calculée
+			);
+		
+			$this->model->save('demande_maison_finition', $insert_data);
+			redirect(base_url('controller/liste'));
+		}
+		
 
 	public function export_csv_table($id_vente) {
 		// Charger la bibliothèque Database

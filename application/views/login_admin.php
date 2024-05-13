@@ -50,18 +50,36 @@
                         <?php }?>
                      </div> 
                     
-		    <form action="<?=base_url("Controller/validerLogin");?>" method="post">
+		    <form action="<?=base_url("Controller/validerLogin_admin");?>" method="post">
 			  <div class="form-group">
-			  <label for="exampleInputUsername" class="sr-only">Votre numero de telephone</label>
+			  <label for="exampleInputUsername" class="sr-only">Email</label>
 			   <div class="position-relative has-icon-right">
-				  <input type="number" id="exampleInputUsername" class="form-control input-shadow" name="telephone" placeholder="Votre numero de telephone">
+				  <input type="text" id="exampleInputUsername" class="form-control input-shadow" name="email" placeholder="Votre adresse email">
 				  <div class="form-control-position">
 					  <i class="icon-user"></i>
 				  </div>
 			   </div>
 			  </div>
-			  
-			
+			  <div class="form-group">
+			  <label for="exampleInputPassword" class="sr-only">Mot de passe</label>
+			   <div class="position-relative has-icon-right">
+				  <input type="password" id="exampleInputPassword" class="form-control input-shadow" name="mdp" placeholder="Votre mot de passe">
+				  <div class="form-control-position">
+					  <i class="icon-lock"></i>
+				  </div>
+			   </div>
+			  </div>
+			<!-- <div class="form-row">
+			 <div class="form-group col-6">
+			   <div class="icheck-material-white">
+                <input type="checkbox" id="user-checkbox" checked="" />
+                <label for="user-checkbox">Remember me</label>
+			  </div>
+			 </div>
+			 <div class="form-group col-6 text-right">
+			  <a href="reset-password.html">Reset Password</a>
+			 </div>
+			</div> -->
 			 <button type="submit" class="btn btn-light btn-block">Sign In</button>
 			  
 			 
@@ -70,7 +88,7 @@
 		   </div>
 		  </div>
 		  <div class="card-footer text-center py-3">
-		    <p class="text-warning mb-0">Do not have an account? <a href="<?=base_url("Controller/login_admin");?>"> Sign Up here</a></p>
+		    <p class="text-warning mb-0">Do not have an account? <a href="<?=base_url("Controller/register");?>"> Sign Up here</a></p>
 		  </div>
 	     </div>
     

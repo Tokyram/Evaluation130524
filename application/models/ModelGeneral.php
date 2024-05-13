@@ -3,6 +3,17 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
     class ModelGeneral extends CI_Model{
         public function login($input,$table) {
+			if(!empty($input["telephone"]) ){
+				$sql = "SELECT * FROM %s WHERE telephone = '%s'";
+				$sql = sprintf($sql, $table, $input["telephone"]);
+				$query = $this->db->query($sql);
+				$row = $query->row_array();
+				return $row;
+			}
+			return null;
+		}
+
+		public function login_admin($input,$table) {
 			if(!empty($input["email"]) || !empty($input["mdp"])){
 				$sql = "SELECT * FROM %s WHERE email = '%s' AND mdp = '%s'";
 				$sql = sprintf($sql, $table, $input["email"], $input["mdp"]);
@@ -25,6 +36,27 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 		public function findAll($table, $colonne){
 			$sql = "SELECT * FROM %s order by %s asc";
 			$sql = sprintf($sql, $table, $colonne);
+			return $this->db->query($sql)->result();
+		}
+
+		public function findAll3($table, $colonne, $colonne1, $colonne2){
+			$sql = "SELECT * FROM %s order by %s asc";
+			$sql = sprintf($sql, $table, $colonne, $colonne1, $colonne2);
+			return $this->db->query($sql)->result();
+		}
+
+		public function findAll10($table, $colonne, $colonne1, $colonne2, $colonne3, $colonne4, $colonne5, $colonne6, $colonne7,$colonne8){
+			$sql = "SELECT * FROM %s order by %s asc";
+			$sql = sprintf($sql, $table, $colonne, $colonne1, $colonne2, $colonne3, $colonne4, $colonne5, $colonne6,  $colonne7, $colonne8);
+			return $this->db->query($sql)->result();
+		}
+
+		public function findtravau(){
+			$sql = "SELECT t.id AS id_travaux, t.designation AS designation_travaux, u.designation AS designation_unite, t.prix_unitaire, tt.id AS id_type_travaux, tt.designation AS designation_type_travaux
+						FROM btp.travaux AS t
+						JOIN btp.type_travaux AS tt ON t.id_type_travaux = tt.id
+						JOIN btp.unite AS u ON t.id_unite = u.id";
+		
 			return $this->db->query($sql)->result();
 		}
 
@@ -59,6 +91,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 			return $this->db->query($sql)->result();
 		}
 
+
 		public function findById($table, $colonne, $id){
 			$this->db->where($colonne, $id);
 			return $this->db->get($table)->row();
@@ -76,8 +109,19 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 			else return false;
 		}
 
-
-	
+		public function find_demande_maison_finition($id){
+			$sql = "SELECT dm.id, u.nom AS nom_utilisateur, u.prenom AS prenom_utilisateur, dm.date_debut, dm.date_fin, tm.nom_maison, f.designation, d.designation AS designation_devis
+					FROM demande_maison_finition dm
+					JOIN maison m ON dm.id_maison = m.id
+					JOIN finition f ON dm.id_finition = f.id
+					JOIN type_maison tm ON m.id_type_maison = tm.id
+					JOIN utilisateur u ON dm.id_user = u.id
+					JOIN devis d ON dm.id_maison = d.id_maison
+					WHERE dm.id_user = $id ";
+		
+			return $this->db->query($sql)->result();
+		}
+		
 
 			public function resetDatabase(){
 				$this->load->database();

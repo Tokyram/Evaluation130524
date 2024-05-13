@@ -13,7 +13,7 @@
     </div>
 <br>
       <div class="row">
-        <div class="col-lg-12">
+        <!-- <div class="col-lg-12">
           <div class="card">
             <div class="card-body">
               <h5 class="card-title">Travaux preparatoire</h5>
@@ -86,7 +86,7 @@
             </div>
             </div>
           </div>
-        </div>
+        </div> -->
 
         <div class="col-lg-12">
           <div class="card">
@@ -105,7 +105,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                <?php foreach($travaux_i as $tt){ ?>
+                <?php foreach($travauxx as $tt){ ?>
                   <tr>
                     <th><?php echo $tt->id_travaux;?></th>
                     <td><?php echo $tt->designation_travaux;?></td>
