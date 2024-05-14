@@ -1,6 +1,6 @@
 <style>
-    .titre{
-
+    *{
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
     table {
         width: 100%;

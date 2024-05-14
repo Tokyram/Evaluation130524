@@ -51,7 +51,7 @@
                         } elseif ($pourcentage_payé < 50) {
                             $couleur = 'orange'; // Orange pour les pourcentages entre 25% et 50%
                         } elseif ($pourcentage_payé < 75) {
-                            $couleur = 'yellow'; // Jaune pour les pourcentages entre 50% et 75%
+                            $couleur = '#ffd400'; // Jaune pour les pourcentages entre 50% et 75%
                         } else {
                             $couleur = 'green'; // Vert pour les pourcentages supérieurs à 75%
                         }

@@ -65,13 +65,13 @@
           <i class="zmdi zmdi-invert-colors"></i> <span>Creation devis</span>
         </a>
       </li>
-
+      <?php if(!isset($_SESSION['utilisateur'])) {?>
       <li>
         <a href="<?=base_url('Controller/form')?>">
           <i class="zmdi zmdi-format-list-bulleted"></i> <span>Insertion de données</span>
         </a>
       </li>
-
+      <?php }?>
       <?php if(isset($_SESSION['utilisateur'])) {?>
       <li>
         <a href="<?=base_url('Controller/table_client')?>">
@@ -102,7 +102,36 @@
         </a>
       </li>
       <?php }?>
+
+      <?php if(!isset($_SESSION['utilisateur'])) {?>
+      <li>
+        <a href="<?=base_url('Controller/importation_csv_travaux')?>">
+          <svg xmlns="http://www.w3.org/2000/svg"  width="20" height="20" fill="currentColor" class="bi bi-file-earmark-arrow-up-fill" viewBox="0 0 16 16">
+          <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M6.354 9.854a.5.5 0 0 1-.708-.708l2-2a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 8.707V12.5a.5.5 0 0 1-1 0V8.707z"/>
+        </svg>    <span style="margin-left:5px">Import travaux et maison</span>
+        </a>
+      </li>
+      <?php }?>
+
+      <?php if(!isset($_SESSION['utilisateur'])) {?>
+      <li>
+        <a href="<?=base_url('Controller/importation_csv_payement')?>">
+        <svg xmlns="http://www.w3.org/2000/svg"  width="20" height="20" fill="currentColor" class="bi bi-file-earmark-arrow-up-fill" viewBox="0 0 16 16">
+          <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M6.354 9.854a.5.5 0 0 1-.708-.708l2-2a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 8.707V12.5a.5.5 0 0 1-1 0V8.707z"/>
+        </svg>       <span style="margin-left:5px">Import Payement</span>
+        </a>
+      </li>
+      <?php }?>
       
+      <?php if(!isset($_SESSION['utilisateur'])) {?>
+      <li>
+        <a href="<?=base_url('Controller/forms_importation')?>">
+        <svg xmlns="http://www.w3.org/2000/svg"  width="20" height="20" fill="currentColor" class="bi bi-file-earmark-arrow-up-fill" viewBox="0 0 16 16">
+          <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M6.354 9.854a.5.5 0 0 1-.708-.708l2-2a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 8.707V12.5a.5.5 0 0 1-1 0V8.707z"/>
+        </svg>       <span style="margin-left:5px">Import</span>
+        </a>
+      </li>
+      <?php }?>
       <!-- <li>
         <a href="<?=base_url('Controller/calendar')?>">
           <i class="zmdi zmdi-calendar-check"></i> <span>Calendar</span>

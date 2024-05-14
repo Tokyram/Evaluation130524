@@ -41,7 +41,6 @@ class Controller extends CI_Controller {
 	}
 	public function form()
 	{
-		$data['type_travaux'] = $this->model->findAll('type_travaux', 'designation');
 		$data['unite'] = $this->model->findAll('unite', 'designation');
 		$data['page'] = "forms";
 		$this->load->view('header',$data);
@@ -374,37 +373,37 @@ class Controller extends CI_Controller {
 			redirect(base_url('controller/liste'));
 		}
 
-		public function payement_devis($id_demande_maison_finition, $payement, $date_payement) {
-			
-
-
-				// Vérifier si le montant entré est négatif
-				if ($payement < 0) {
-					// Rediriger avec un message d'erreur
-					redirect(base_url('controller/payement_ajour_restant_payer?id=' . $id_demande_maison_finition . '&error=Le montant ne peut pas être négatif'));
-				}
-
-				// Récupérer le montant restant à payer
-				$montant_restant = $this->model->getMontantRestantAPayer($id_demande_maison_finition);
-
-				// Vérifier si le montant entré est supérieur au montant restant à payer
-				if ($payement > $montant_restant) {
-					// Rediriger avec un message d'erreur
-					redirect(base_url('controller/payement_ajour_restant_payer?id=' . $id_demande_maison_finition. '&error=Le montant entré est supérieur au montant restant à payer'));
-				}
-			
-
+		public function payement_devis() {
+			$input = $this->input->post();
+			$payement = $input['payement']; // Utiliser 'payement' au lieu de 'montant_payé'
+			$id_demande_maison_finition = $input['id_demande_maison_finition']; // Assurez-vous que cette clé correspond au nom du champ dans le formulaire
+		
+			// Vérifier si le montant entré est négatif
+			if ($payement < 0) {
+				// Rediriger avec un message d'erreur
+				redirect(base_url('controller/payement_ajour_restant_payer?id=' . $id_demande_maison_finition . '&error=Le montant ne peut pas être négatif'));
+			}
+		
+			// Récupérer le montant restant à payer
+			$montant_restant = $this->model->getMontantRestantAPayer($id_demande_maison_finition);
+		
+			// Vérifier si le montant entré est supérieur au montant restant à payer
+			if ($payement > $montant_restant) {
+				// Rediriger avec un message d'erreur
+				redirect(base_url('controller/payement_ajour_restant_payer?id=' . $id_demande_maison_finition. '&error=Le montant entré est supérieur au montant restant à payer'));
+			}
+		
 			$insert_data = array(
 				'id_demande_maison_finition' => $id_demande_maison_finition,
 				'montant' => $payement,
-				'date_payement' => $date_payement
+				'date_payement' => $input['date_payement'] // Assurez-vous que cette clé correspond au nom du champ dans le formulaire
 			);
 		
 			$this->model->save('historique_payement', $insert_data);
 			// Rediriger vers la page de la table des clients en passant l'ID
 			redirect(base_url('controller/payement_ajour_restant_payer?id=' . $id_demande_maison_finition));
-
 		}
+		
 
 		public function payement_ajour_restant_payer(){
 			$id = $this->input->get('id');
@@ -528,6 +527,236 @@ class Controller extends CI_Controller {
 			// Redirection ou affichage de message d'erreur
 		}
 	}
+
+	public function importation_csv_travaux(){
+		$date['page']='forms_importation_t_m';
+		$this->load->view('header', $date);
+	}
+
+	public function importation_csv_payement(){
+		$date['page']='forms_importation_payement';
+		$this->load->view('header', $date);
+	}
+
+	public function forms_importation(){
+		$date['page']='forms_importation';
+		$this->load->view('header', $date);
+	}
+
+	// public function upload_csv_1() {
+	// 	$this->load->database();
+		
+	// 	// Appel de la fonction pour traiter le premier fichier CSV
+	// 	$file_path = $_FILES['csv_file_1']['tmp_name'];
+	// 	$handle = fopen($file_path, "r");
+	
+	// 	if ($handle !== FALSE) {
+	// 		// Créer la table temporaire si elle n'existe pas
+	// 		$this->db->query("CREATE TEMPORARY TABLE IF NOT EXISTS temp_table1 (
+	// 			type_maison varchar(255),
+	// 			description varchar(255),
+	// 			surface float(10,2),
+	// 			code_travaux int(11),
+	// 			type_travaux varchar(255),
+	// 			unite varchar(255),
+	// 			prix_unitaire float(10,2),
+	// 			quantite double precision,
+	// 			duree_travaux double precision
+	// 		)");
+	
+	// 		$line_count = 0;
+	// 		while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+	// 			if ($line_count == 0) {
+	// 				$line_count++;
+	// 				continue;
+	// 			}
+	
+	// 			// Insérer les données dans la table temporaire
+	// 			$this->db->insert('temp_table1', array(
+	// 				'type_maison' => $data[0],
+	// 				'description' => $data[1],
+	// 				'surface' => $data[2],
+	// 				'code_travaux' => $data[3],
+	// 				'type_travaux' => $data[4],
+	// 				'unite' => $data[5],
+	// 				'prix_unitaire' => $data[6],
+	// 				'quantite' => $data[7],
+	// 				'duree_travaux' => $data[8]
+	// 			));
+	
+	// 			// Récupérer les ID des enregistrements associés (type_maison, unite)
+	// 			$exist_type_maison = $this->db->get_where('type_maison', array('nom_maison' => $data[0]))->row()->id;
+	// 			$exist_unite = $this->db->get_where('unite', array('designation' => $data[5]))->row()->id;
+	
+	// 			// Insérer les données dans les tables liées avec les contraintes de clé étrangère
+	// 			$travaux_data = array(
+	// 				'code_travaux' => $data[3],
+	// 				'designation' => $data[4],
+	// 				'unite' => $exist_unite, // Utilisation de l'ID de l'unité existante
+	// 				'prix_unitaire' => $data[6],
+	// 				'quantite' => $data[7]
+	// 			);
+	// 			$this->db->insert('travaux', $travaux_data);
+	
+	// 			$details_devis_data = array(
+	// 				'id_travaux' => $this->db->insert_id(), // Utilisation de l'ID du dernier travail inséré
+	// 				'prix_unitaire' => $data[6],
+	// 				'quantite' => $data[7]
+	// 			);
+	// 			$this->db->insert('details_devis', $details_devis_data);
+	
+	// 			$maison_data = array(
+	// 				'id_type_maison' => $exist_type_maison,
+	// 				'nom_maison' => $data[0],
+	// 				'surface' => $data[2]
+	// 			);
+	// 			$this->db->insert('maison', $maison_data);
+	
+	// 			$line_count++;
+	// 		}
+	
+	// 		fclose($handle);
+	// 		redirect(base_url('controller/forms_importation'));
+	// 	} else {
+	// 		// Gérer le cas où aucun fichier n'a été téléchargé
+	// 		echo "Veuillez sélectionner un fichier CSV.";
+	// 	}
+	// }
+
+	public function upload_csv_1() {
+		$this->load->database();
+	
+		if (isset($_FILES['csv_file_1'])) {
+			// Appel de la fonction pour traiter le premier fichier CSV
+			$file_path = $_FILES['csv_file_1']['tmp_name'];
+			$handle = fopen($file_path, "r");
+	
+			// Création de la table temporaire si elle n'existe pas
+			$this->db->query("CREATE TEMPORARY TABLE IF NOT EXISTS temp_table1 (
+				type_maison varchar(255),
+				description varchar(255),
+				surface float(10,2),
+				code_travaux int(11),
+				type_travaux varchar(255),
+				unité varchar(255),
+				prix_unitaire float(10,2),
+				quantite double precision,
+				duree_travaux double precision
+			)");
+	
+			if ($handle !== FALSE) {
+				$line_count = 0;
+	
+				while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+					if ($line_count == 0) {
+						$line_count++;
+						continue;
+					}
+	
+					// Insertion des données dans la table temporaire
+					$this->db->insert('temp_table1', array(
+						'type_maison' => $data[0],
+						'description' => $data[1],
+						'surface' => $data[2],
+						'code_travaux' => $data[3],
+						'type_travaux' => $data[4],
+						'unité' => $data[5],
+						'prix_unitaire' => $data[6],
+						'quantite' => $data[7],
+						'duree_travaux' => $data[8]
+					));
+	
+					// Récupération des ID des enregistrements associés (type_maison, unite)
+					$exist_type_maison_row = $this->db->get_where('type_maison', array('nom_maison' => $data[0]))->row();
+					$exist_unite_row = $this->db->get_where('unite', array('designation' => $data[5]))->row();
+	
+					if ($exist_type_maison_row) {
+						$exist_type_maison = $exist_type_maison_row->id;
+					} else {
+						// Insérer le type de maison s'il n'existe pas
+						$this->db->insert('type_maison', array('nom_maison' => $data[0]));
+						$exist_type_maison = $this->db->insert_id();
+					}
+	
+					if ($exist_unite_row) {
+						$exist_unite = $exist_unite_row->id;
+					} else {
+						// Insérer l'unité s'elle n'existe pas
+						$this->db->insert('unite', array('designation' => $data[5]));
+						$exist_unite = $this->db->insert_id();
+					}
+	
+					// Insérer les enregistrements dans les autres tables avec les clés étrangères
+					$travaux_row = $this->db->get_where('travaux', array('code_travaux' => $data[3]))->row();
+
+					if ($travaux_row) {
+						$id_travaux = $travaux_row->id;
+					} else {
+						$travaux_data = array(
+							'code_travaux' => $data[3],
+							'designation' => $data[4],
+							'id_unite' => $exist_unite,
+							'prix_unitaire' => $data[6]
+						);
+						$this->db->insert('travaux', $travaux_data);
+						$id_travaux = $this->db->insert_id();
+					}
+					
+					$type_maison_row = $this->db->get_where('type_maison', array('nom_maison' => $data[0]))->row();
+					if ($type_maison_row) {
+						// Le type de maison existe déjà, vous pouvez utiliser son ID
+						$id_type_maison = $type_maison_row->id;
+					} else {
+						// Le type de maison n'existe pas, donc vous l'insérez
+						$type_maison_data = array(
+							'nom_maison' => $data[0],
+							'duree' => $data[8] // Ajout de la durée
+						);
+						$this->db->insert('type_maison', $type_maison_data);
+						$id_type_maison = $this->db->insert_id();
+					}
+
+					
+					$existing_maison_row = $this->db->get_where('maison', array('description' => $data[1], 'surface' => $data[2]))->row();
+
+					if (!$existing_maison_row) {
+						// Si aucune entrée n'existe avec la même description et surface, alors insérer
+						$maison_data = array(
+							'id_type_maison' => $exist_type_maison,
+							'description' => $data[1],
+							'surface' => $data[2],
+							// Ajouter d'autres champs si nécessaire
+						);
+						$this->db->insert('maison', $maison_data);
+					}
+					
+					$prix_total = $data[6] * $data[7];
+					$details_devis_data = array(
+						'id_travaux' => $id_travaux,
+						'prix_unitaire' => $data[6],
+						'quantite' => $data[7],
+						'prix_total' => $prix_total
+					);
+					$this->db->insert('details_devis', $details_devis_data);
+					// Vous pouvez continuer à insérer dans les autres tables selon vos besoins
+	
+					$line_count++;
+				}
+	
+				fclose($handle);
+				redirect(base_url('controller/forms_importation'));
+			} else {
+				// Gérer le cas où aucun fichier n'a été téléchargé
+				echo "Veuillez sélectionner un fichier CSV.";
+			}
+		} else {
+			// Gérer le cas où aucun fichier n'a été téléchargé
+			echo "Veuillez sélectionner un fichier CSV.";
+		}
+	}
 	
 	
+		
 }
+	
+

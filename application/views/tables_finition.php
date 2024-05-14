@@ -16,7 +16,7 @@
         <div class="col-lg-12">
           <div class="card">
             <div class="card-body">
-              <h5 class="card-title">Liste Travaux</h5>
+              <h5 class="card-title">Liste Des finition</h5>
 			  <div class="table-responsive">
               <table class="table table-hover">
                 <thead>

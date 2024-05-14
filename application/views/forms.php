@@ -48,7 +48,7 @@
       <div class="col-lg-6">
         <div class="card">
            <div class="card-body">
-           <div class="card-title">AJOUT DE TYPE DE TRAVAUX</div>
+           <div class="card-title">IMPORTER </div>
            <hr>
             <form action="<?= base_url("Controller/insertion_type_travaux"); ?>" method="post">
            <div class="form-group">
@@ -70,15 +70,7 @@
            <div class="card-title">AJOUT DE TRAVAUX</div>
            <hr>
             <form action="<?=base_url("Controller/insertion_travaux");?>" method="post">
-                <!-- <div class="form-group">
-                  <label for="input-6">Type de travaux</label>
-                    <select name="id_type_travaux" class="form-control form-control-rounded" id="input-6">
-                      <?php foreach($type_travaux as $tt){ ?>
-                          <option value="<?php echo $tt->id;?>"><?php echo $tt->designation;?></option>
-                      <?php }?>
-                    </select>
-                </div> -->
-
+               
                 <div class="form-group">
                     <label for="input-7">code travaux</label>
                     <input type="text" name="code_travaux" class="form-control form-control-rounded" id="input-7">

@@ -42,7 +42,7 @@
                 <tbody>
                 <?php foreach($details_devis as $tt){ ?>
                   <tr>
-                    <th>v</th>
+                    <!-- <th>code</th> -->
                     <th><?php echo $tt->designation_travaux;?></th>
                     <td><?php echo $tt->unite_travaux;?></td>
                     <td><?php echo $tt->quantite_detail_devis;?></td>
@@ -63,10 +63,10 @@
                 <p>Total : <small class="text"><?php echo number_format($tt->nouveau_prix_total_devis,2). 'Ar';?> </small></p>
             </h2>
             <div class="row">
-            <div class="col-lg-12">
+            <div class="col-lg-6">
             
                     
-            <a href="<?= base_url('Controller/generate_pdf?id=' . $id );?>" class="btn btn-primary">Exporter en PDF</a>
+            <a href="<?= base_url('Controller/generate_pdf?id=' . $id );?>" style="width:250px; color:#000000;background-color: #ffd400; margin-top:40px" class="btn btn-light btn-round px-5 ">Exporter en PDF</a>
             <!-- <?php echo $id;?> -->
 
 
