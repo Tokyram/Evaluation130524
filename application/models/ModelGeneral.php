@@ -52,45 +52,21 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 		}
 
 		public function findtravau(){
-			$sql = "SELECT t.id AS id_travaux, t.designation AS designation_travaux, u.designation AS designation_unite, t.prix_unitaire, tt.id AS id_type_travaux, tt.designation AS designation_type_travaux
+			$sql = "SELECT t.id AS id_travaux, t.designation AS designation_travaux, u.designation AS designation_unite, t.prix_unitaire
 						FROM btp.travaux AS t
-						JOIN btp.type_travaux AS tt ON t.id_type_travaux = tt.id
 						JOIN btp.unite AS u ON t.id_unite = u.id";
 		
 			return $this->db->query($sql)->result();
 		}
 
-		public function findtravaut(){
-			$sql = "SELECT t.id AS id_travaux, t.designation AS designation_travaux, u.designation AS designation_unite, t.prix_unitaire, tt.id AS id_type_travaux, tt.designation AS designation_type_travaux
-						FROM btp.travaux AS t
-						JOIN btp.type_travaux AS tt ON t.id_type_travaux = tt.id
-						JOIN btp.unite AS u ON t.id_unite = u.id
-						WHERE tt.designation = 'Travaux terrassement'";
-		
-			return $this->db->query($sql)->result();
-		}
-
 		public function findtravaup(){
-			$sql = "SELECT t.id AS id_travaux, t.designation AS designation_travaux, u.designation AS designation_unite, t.prix_unitaire, tt.id AS id_type_travaux, tt.designation AS designation_type_travaux
+			$sql = "SELECT t.id AS id_travaux, t.designation AS designation_travaux, u.designation AS designation_unite, t.prix_unitaire
 					FROM btp.travaux AS t
-					JOIN btp.type_travaux AS tt ON t.id_type_travaux = tt.id
 					JOIN btp.unite AS u ON t.id_unite = u.id
-					WHERE tt.designation = 'Travaux preparatoire'";
-				
+					";
 			return $this->db->query($sql)->result();
 		}
 		
-
-		public function findtravaui(){
-			$sql = "SELECT t.id AS id_travaux, t.designation AS designation_travaux,u.designation AS designation_unite, t.prix_unitaire, tt.id AS id_type_travaux, tt.designation AS designation_type_travaux
-						FROM btp.travaux AS t
-						JOIN btp.type_travaux AS tt ON t.id_type_travaux = tt.id
-						JOIN btp.unite AS u ON t.id_unite = u.id
-						WHERE tt.designation = 'Travaux en infrastructure'";
-		
-			return $this->db->query($sql)->result();
-		}
-
 
 		public function findById($table, $colonne, $id){
 			$this->db->where($colonne, $id);
@@ -372,6 +348,35 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 			return $this->db->query($sql)->result();
 		}
+
+		public function getChartData() {
+			$query = $this->db->query("
+				SELECT
+					YEAR(dm.date_creation_devis) AS annee,
+					MONTH(dm.date_creation_devis) AS mois,
+					SUM(nouveau_prix_total_devis) AS somme_nouveau_prix_total
+				FROM
+					btp.demande_maison_finition dm
+				JOIN 
+					btp.nouveau_prix_total_view np ON dm.id = np.id_demande
+				GROUP BY
+					YEAR(dm.date_creation_devis),
+					MONTH(dm.date_creation_devis)
+				ORDER BY
+					annee,
+					mois
+			");
+			return $query->result_array();
+		}
+
+		public function getTotalMontantPayé() {
+			$query = $this->db->query("
+					SELECT SUM(montant) AS total_paye FROM historique_payement
+			");
+			return $query->result_array();
+		}
+
+
     }
 
 ?>

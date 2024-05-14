@@ -19,7 +19,10 @@ class Controller extends CI_Controller {
 	
 	public function home()
 	{
+		$data['donnees_par_annee'] = $this->model->getChartData();
+    	$data['mois'] = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 		$data['somme_total_devis_existant'] = $this->model->somme_total_devis_existant();
+		$data['getTotalMontantPayé'] = $this->model->getTotalMontantPayé();
 		$data['page'] = "home";
 		$this->load->view('header', $data);
 	}
@@ -57,9 +60,7 @@ class Controller extends CI_Controller {
 	}
 	public function table()
 	{
-		$data['travaux_t']= $this->model->findtravaut();
 		$data['travaux_p']= $this->model->findtravaup();
-		$data['travaux_i']= $this->model->findtravaui();
 		$data['travauxx']= $this->model->findtravau();
 
 		$data['page'] = "tables";
@@ -67,6 +68,16 @@ class Controller extends CI_Controller {
 		// echo ("coucou");
 	}
 
+	public function table_finition()
+	{
+		$data['finition']= $this->model->findAll3('finition' , 'id', 'designation', 'pourcentage');
+
+		$data['page'] = "tables_finition";
+		$this->load->view('header', $data);
+		// echo ("coucou");
+	}
+	
+	
 	public function table_client()
 	{
 
@@ -226,7 +237,7 @@ class Controller extends CI_Controller {
 			'designation' => $input['designation'],
 			'id_unite' => $input['id_unite'],
 			'prix_unitaire' => $prix_unitaire, // Insérer le prix unitaire converti en nombre
-			'id_type_travaux' => $input['id_type_travaux']
+			'code_travaux' => $input['code_travaux']
 		);
 
 		$this->model->save('travaux', $insert_data);
@@ -245,26 +256,53 @@ class Controller extends CI_Controller {
 		}
 
 		$data['travaux']=$this->model->findById('travaux','id',$valeur);
-		$data['type_travaux'] = $this->model->findAll('type_travaux', 'designation');
 		$data['unite'] = $this->model->findAll('unite', 'designation');
 		
 		$data['page'] = 'update';
 		$this->load->view('header', $data);
 	}
 
+	public function modification_finition(){
+		// $valeur = null;
+		if(isset($_GET['id'])) {
+			$valeur = $_GET['id'];
+		}
+
+		$data['finiton']=$this->model->findById('finition','id',$valeur);
+		
+		$data['page'] = 'update_finition';
+		$this->load->view('header', $data);
+	}
+
+	public function modifier_finition() {
+		$input = $this->input->post();
+		// var_dump($input);
+		
+		
+		$pourcentage = str_replace(',', '.', $input['pourcentage']);
+		$pourcentage = (float) $pourcentage; 
+
+		$insert_data = array(
+			'designation' => $input['finition'],
+			'pourcentage' => $pourcentage
+		);
+	
+				if ($this->model->update('finition', 'id', $input['id'], $insert_data)) {
+					redirect(base_url('controller/table_finition'));
+				} else {
+					echo "Erreur lors de la mise à jour.";
+				}
+			}
+
 	public function modifier() {
 		$input = $this->input->post();
-		var_dump($input);
+		// var_dump($input);
 		
 		
-		$prix_unitaire = str_replace(',', '.', $input['prix_unitaire']);
-		$prix_unitaire = (float) $prix_unitaire; 
-
 		$insert_data = array(
 			'designation' => $input['designation'],
 			'id_unite' => $input['id_unite'],
-			'prix_unitaire' => $prix_unitaire,
-			'id_type_travaux' => $input['id_type_travaux']
+			'code_travaux' => $input['code_travaux']
 		);
 	
 				if ($this->model->update('travaux', 'id', $input['id'], $insert_data)) {
@@ -273,6 +311,7 @@ class Controller extends CI_Controller {
 					echo "Erreur lors de la mise à jour.";
 				}
 			}
+		
 
 		public function resetData(){
 			// Appeler la méthode pour réinitialiser les données
@@ -337,20 +376,23 @@ class Controller extends CI_Controller {
 
 		public function payement_devis($id_demande_maison_finition, $payement, $date_payement) {
 			
-			if ($payement < 0) {
-				// Rediriger avec un message d'erreur
-				redirect(base_url('controller/payement_ajour_restant_payer?id=' . $id_demande_maison_finition . '&error=Le montant ne peut pas être négatif'));
 
-			}
-		
-			// Récupérer le montant restant à payer
-			$montant_restant = $this->model->getMontantRestantAPayer($id_demande_maison_finition);
-		
-			// Vérifier si le montant entré est supérieur au montant restant à payer
-			if ($payement > $montant_restant) {
-				// Rediriger avec un message d'erreur
-				redirect(base_url('controller/payement_ajour_restant_payer?id=' . $id_demande_maison_finition. '&error=Le montant entré est supérieur au montant restant à payer'));
-			}
+
+				// Vérifier si le montant entré est négatif
+				if ($payement < 0) {
+					// Rediriger avec un message d'erreur
+					redirect(base_url('controller/payement_ajour_restant_payer?id=' . $id_demande_maison_finition . '&error=Le montant ne peut pas être négatif'));
+				}
+
+				// Récupérer le montant restant à payer
+				$montant_restant = $this->model->getMontantRestantAPayer($id_demande_maison_finition);
+
+				// Vérifier si le montant entré est supérieur au montant restant à payer
+				if ($payement > $montant_restant) {
+					// Rediriger avec un message d'erreur
+					redirect(base_url('controller/payement_ajour_restant_payer?id=' . $id_demande_maison_finition. '&error=Le montant entré est supérieur au montant restant à payer'));
+				}
+			
 
 			$insert_data = array(
 				'id_demande_maison_finition' => $id_demande_maison_finition,
@@ -395,6 +437,8 @@ class Controller extends CI_Controller {
 			$data['page'] = 'table_details_devis_admin';
 			$this->load->view('header', $data);
 		}
+
+		
 		
 		public function generate_pdf() {
 			$id = $this->input->get('id');
@@ -485,6 +529,5 @@ class Controller extends CI_Controller {
 		}
 	}
 	
-
 	
 }

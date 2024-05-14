@@ -87,13 +87,21 @@
       </li>
       <?php }?>
 
-      <!-- <?php if(!isset($_SESSION['utilisateur'])) {?>
+      <?php if(!isset($_SESSION['utilisateur'])) {?>
       <li>
         <a href="<?=base_url('Controller/table')?>">
-          <i class="zmdi zmdi-grid"></i> <span>Liste de travaux</span>
+          <i class="zmdi zmdi-grid"></i> <span>Liste des travaux</span>
         </a>
       </li>
-      <?php }?> -->
+      <?php }?>
+
+      <?php if(!isset($_SESSION['utilisateur'])) {?>
+      <li>
+        <a href="<?=base_url('Controller/table_finition')?>">
+          <i class="zmdi zmdi-grid"></i> <span>Liste des finition</span>
+        </a>
+      </li>
+      <?php }?>
       
       <!-- <li>
         <a href="<?=base_url('Controller/calendar')?>">

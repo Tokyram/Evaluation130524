@@ -65,9 +65,6 @@
   <script src="<?=base_url('assets/plugins/Chart.js/Chart.min.js')?>"></script>
  
   <!-- Index js -->
-  <script src="<?=base_url('assets/js/index.js')?>"></script>
-  <!-- <script src="<?=base_url('assets/js/bar.js')?>"></script> -->
-  <script src="<?=base_url('assets/js/chart.js')?>"></script>
 
     <!-- Full Calendar -->
     <script src='<?=base_url('assets/plugins/fullcalendar/js/moment.min.js')?>'></script>

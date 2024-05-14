@@ -43,7 +43,6 @@
                 <?php foreach($details_devis as $tt){ ?>
                   <tr>
                     <th><?php echo $tt->designation_travaux;?></th>
-                    <th><?php echo $tt->designation_travaux;?></th>
                     <td><?php echo $tt->unite_travaux;?></td>
                     <td><?php echo $tt->quantite_detail_devis;?></td>
                     <td><?php echo  number_format($tt->prix_unitaire_detail_devis,2). 'Ar';?></td>

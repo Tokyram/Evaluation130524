@@ -20,7 +20,7 @@
           <!-- <p class="text-muted">This is 3 column contents</p> -->
           <div class="row" style="margin-top:50px;">
           <div class="col-md-6 col-lg-3">
-          <form action="<?= base_url("Controller/insertion_demande_maison_finition"); ?>" method="post" enctype="multipart/form-data">
+          <form action="<?= base_url("Controller/insertion_demande_maison_finition"); ?>" method="post"  id="packForm" enctype="multipart/form-data">
           <div style="display:flex; align-items:center; width: 1500px ;height:auto; justify-content:space-between;">
             <?php foreach($devis_maison as $tt){ ?>
                 <div class="card">
@@ -134,3 +134,36 @@
     <a href="javaScript:void();" class="back-to-top"><i class="fa fa-angle-double-up"></i> </a>
     <!--End Back To Top Button-->
 	
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+          document.getElementById("packForm").addEventListener("submit", function(event) {
+              event.preventDefault(); // Empêche la soumission du formulaire par défaut
+              
+              // Créer un objet FormData pour collecter les données du formulaire
+              var formData = new FormData(this);
+              
+              // Créer une nouvelle requête XHR
+              var xhr = new XMLHttpRequest();
+              
+              // Définir le type de requête et l'URL
+              xhr.open("POST", this.action, true);
+              
+              // Définir le gestionnaire d'événement pour la réponse de la requête
+              xhr.onload = function() {
+                  if (xhr.status === 200) {
+                      // Traitement de la réponse du serveur
+                      console.log(xhr.responseText);
+                      alert("Le formulaire a été envoyé avec succès");
+                      // Rediriger ou effectuer d'autres actions en fonction de la réponse
+                  } else {
+                      // Gérer les erreurs
+                      console.error("Erreur lors de la requête.");
+                      alert("Erreur lors de la requête.");
+                  }
+              };
+              
+              // Envoyer la requête avec les données du formulaire
+              xhr.send(formData);
+          });
+      });
+</script>

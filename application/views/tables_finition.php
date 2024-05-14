@@ -23,23 +23,21 @@
                   <tr  style="color: #ffd400;">
                     <th scope="col">Identifiant</th>
                     <th scope="col">Designation</th>
-                    <th scope="col">Unité</th>
-                    <th scope="col">Prix unitaire</th>
-                    <th scope="col"></th>
+                    <th scope="col">Pourcentage</th>
+                    <th scope="col">Modifier</th>
 
                   </tr>
                 </thead>
                 <tbody>
-                <?php foreach($travauxx as $tt){ ?>
+                <?php foreach($finition as $tt){ ?>
                   <tr>
-                    <th><?php echo $tt->id_travaux;?></th>
-                    <td><?php echo $tt->designation_travaux;?></td>
-                    <td><?php echo $tt->designation_unite;?></td>
-                    <td><?php echo number_format($tt->prix_unitaire,2). 'Ar';?></td>
+                    <th><?php echo $tt->id;?></th>
+                    <td><?php echo $tt->designation;?></td>
+                    <td><?php echo $tt->pourcentage;?></td>
                     <td style="float:right;">
-                      <a href="<?= base_url('Controller/modification?id=' . $tt->id_travaux) ?>" class="btn btn-light btn-round px-5"><i class="icon-note"></i></a>
+                      <a href="<?= base_url('Controller/modification_finition?id=' . $tt->id) ?>" class="btn btn-light btn-round px-5"><i class="icon-note"></i></a>
                     
-                      <a style="background-color: red; border:none;" href="<?= base_url('Controller/supprimer/' .$tt->id_travaux) ?>" class="btn btn-light btn-round px-5">Supprimer</i></a>
+                      <a style="background-color: red; border:none;" href="<?= base_url('Controller/supprimer/' .$tt->id) ?>" class="btn btn-light btn-round px-5">Supprimer</i></a>
                     </td>
                   </tr>
                   <?php }?>

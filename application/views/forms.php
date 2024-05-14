@@ -70,13 +70,18 @@
            <div class="card-title">AJOUT DE TRAVAUX</div>
            <hr>
             <form action="<?=base_url("Controller/insertion_travaux");?>" method="post">
-                <div class="form-group">
+                <!-- <div class="form-group">
                   <label for="input-6">Type de travaux</label>
                     <select name="id_type_travaux" class="form-control form-control-rounded" id="input-6">
                       <?php foreach($type_travaux as $tt){ ?>
                           <option value="<?php echo $tt->id;?>"><?php echo $tt->designation;?></option>
                       <?php }?>
                     </select>
+                </div> -->
+
+                <div class="form-group">
+                    <label for="input-7">code travaux</label>
+                    <input type="text" name="code_travaux" class="form-control form-control-rounded" id="input-7">
                 </div>
 
                 <div class="form-group">
@@ -99,7 +104,7 @@
                 </div>
         
            <div class="form-group">
-            <button type="submit" class="btn btn-light btn-round px-5"><i class="icon-lock"></i> Acheter </button>
+            <button type="submit" class="btn btn-light btn-round px-5"><i class="icon-lock"></i> Register </button>
             </div>
           </form>
          </div>

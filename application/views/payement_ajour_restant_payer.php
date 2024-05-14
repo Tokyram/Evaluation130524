@@ -49,7 +49,7 @@
                       <div id="popup<?= $tt->id_demande ?>" style="display: none;border: 1px solid white; border-radius:10px ;padding:10px; margin:20px;">
                         <h2>Entrez le prix à payer</h2>
                         <p>Montant :</p>
-                        <input class="form-control form-control-rounded" type="text" id="payement<?= $tt->id_demande ?>" placeholder="Montant"> 
+                        <input class="form-control form-control-rounded" name="payement" type="text" id="payement<?= $tt->id_demande ?>" placeholder="Montant"> 
                         <br>
                         <p>Entrez la date :</p>
                         <input class="form-control form-control-rounded" type="date" id="date_payement<?= $tt->id_demande ?>" placeholder="Date de payement"> 

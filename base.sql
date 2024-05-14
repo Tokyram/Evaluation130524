@@ -328,3 +328,94 @@ JOIN
     devis d ON dm.id_maison = d.id_maison
 WHERE 
     dm.id = 1;
+
+
+
+
+CREATE OR REPLACE VIEW nouveau_prix_total_view AS
+SELECT 
+    dm.id AS id_demande,
+    u.nom AS nom_utilisateur,
+    u.prenom AS prenom_utilisateur,
+    dm.date_debut,
+    dm.date_fin,
+    tm.nom_maison,
+    f.designation AS designation_finition,
+    d.designation AS designation_devis,
+    (SELECT SUM(prix_total) FROM details_devis WHERE id_devis = d.id) AS somme_prix_total_devis,
+    (SELECT pourcentage FROM finition WHERE id = dm.id_finition) AS pourcentage_augmentation,
+    ((SELECT SUM(prix_total) FROM details_devis WHERE id_devis = d.id) * (1 + (SELECT pourcentage FROM finition WHERE id = dm.id_finition) / 100)) AS nouveau_prix_total_devis,
+    dd.id AS id_detail_devis,
+    t.designation AS designation_travaux,
+    t.prix_unitaire AS prix_unitaire_travaux,
+    u2.designation AS unite_travaux,
+    dd.quantite AS quantite_detail_devis,
+    dd.prix_unitaire AS prix_unitaire_detail_devis,
+    dd.prix_total AS prix_total_detail_devis
+FROM 
+    demande_maison_finition dm
+JOIN 
+    maison m ON dm.id_maison = m.id
+JOIN 
+    finition f ON dm.id_finition = f.id
+JOIN 
+    type_maison tm ON m.id_type_maison = tm.id
+JOIN 
+    utilisateur u ON dm.id_user = u.id
+JOIN 
+    devis d ON dm.id_maison = d.id_maison
+JOIN 
+    details_devis dd ON d.id = dd.id_devis
+JOIN 
+    travaux t ON dd.id_travaux = t.id
+JOIN 
+    unite u2 ON t.id_unite = u2.id;
+
+
+SELECT
+    YEAR(dm.date_creation_devis) AS annee,
+    MONTH(dm.date_creation_devis) AS mois,
+    select sum(nouveau_prix_total_devis) from nouveau_prix_total_view AS somme_nouveau_prix_total
+FROM
+    btp.demande_maison_finition dm
+JOIN btp.devis d ON dm.id_maison = d.id_maison
+JOIN btp.details_devis dd ON d.id = dd.id_devis
+JOIN btp.finition f ON dm.id_finition = f.id
+GROUP BY
+    YEAR(dm.date_creation_devis),
+    MONTH(dm.date_creation_devis)
+ORDER BY
+    annee,
+    mois;
+
+-- histogeamme
+SELECT
+    YEAR(dm.date_creation_devis) AS annee,
+    MONTH(dm.date_creation_devis) AS mois,
+    SUM(nouveau_prix_total_devis) AS somme_nouveau_prix_total
+FROM
+    btp.demande_maison_finition dm
+JOIN 
+    btp.nouveau_prix_total_view np ON dm.id = np.id_demande
+GROUP BY
+    YEAR(dm.date_creation_devis),
+    MONTH(dm.date_creation_devis)
+ORDER BY
+    annee,
+    mois;
+
+
+SELECT
+    YEAR(dm.date_creation_devis) AS annee,
+    MONTH(dm.date_creation_devis) AS mois,
+    SUM(nouveau_prix_total_devis) AS somme_nouveau_prix_total
+    FROM
+    btp.demande_maison_finition dm
+    JOIN 
+    btp.nouveau_prix_total_view np ON dm.id = np.id_demande
+    GROUP BY
+    YEAR(dm.date_creation_devis),
+    MONTH(dm.date_creation_devis)
+    ORDER BY
+    annee,
+    mois

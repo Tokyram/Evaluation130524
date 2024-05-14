@@ -25,7 +25,7 @@
                     <th scope="col">Finition</th>
                     <th scope="col">Date debut</th>
                     <th scope="col">Date fin</th>
-                    <th scope="col">Reste a payer</th>
+                    <th scope="col">Total avec finition</th>
                     <th scope="col">Action</th>
 
                   </tr>

@@ -33,24 +33,52 @@
                     <th scope="col">Prix total</th>
                     <th scope="col">Montant payé</th>
                     <th scope="col">Reste a payer</th>
+                    <th scope="col">Payement effectué</th>
+
                     <th scope="col">Action</th>
 
                   </tr>
                 </thead>
                 <tbody>
-                <?php foreach($payement_ajour_restant_payer as $tt){ ?>
-                  <tr>
-                    <th>Devis <?php echo $tt->id_demande ;?></th>
-                    <th><?php echo $tt->nom_utilisateur ;?></th>
-                    <td><?php echo number_format($tt->nouveau_prix_total,2). 'Ar';?></td>
-                    <td><?php echo number_format($tt->montant_payé,2). 'Ar';?></td>
-                    <td ><p style=" display:flex;justify-content:center; font-weight:bolder; background-color:#ffd400;padding:10px; color:black; border-radius:5px;"><?php echo number_format($tt->montant_restant,2). 'Ar';?></p></td>
-                    <td style="float:right;">
-                      <a href="<?= base_url('Controller/details_devis_admin?id=' . $tt->id_demande) ?>"  class="btn btn-light btn-round px-5">Voir la liste des traveaux a effectuer</a>
-                       
-                    </td>
-                  </tr>
-                  <?php }?>
+                <?php foreach($payement_ajour_restant_payer as $tt): ?>
+                    <?php
+                        // Calcul du pourcentage de paiement
+                        $pourcentage_payé = ($tt->montant_payé / $tt->nouveau_prix_total) * 100;
+                        
+                        // Déterminer la couleur en fonction du pourcentage
+                        if ($pourcentage_payé < 25) {
+                            $couleur = 'red'; // Rouge pour les pourcentages inférieurs à 25%
+                        } elseif ($pourcentage_payé < 50) {
+                            $couleur = 'orange'; // Orange pour les pourcentages entre 25% et 50%
+                        } elseif ($pourcentage_payé < 75) {
+                            $couleur = 'yellow'; // Jaune pour les pourcentages entre 50% et 75%
+                        } else {
+                            $couleur = 'green'; // Vert pour les pourcentages supérieurs à 75%
+                        }
+                    ?>
+
+                    <tr>
+                        <th>Devis <?php echo $tt->id_demande ;?></th>
+                        <th><?php echo $tt->nom_utilisateur ;?></th>
+                        <td><?php echo number_format($tt->nouveau_prix_total, 2). 'Ar';?></td>
+                        <td><?php echo number_format($tt->montant_payé, 2). 'Ar';?></td>
+                        <td>
+                            <p style="display:flex; justify-content:center; font-weight:bolder; background-color:#ffd400; padding:10px; color:black; border-radius:5px;">
+                                <?php echo number_format($tt->montant_restant, 2). 'Ar';?>
+                            </p>
+                        </td>
+                        <td>
+                            <p style="display:flex; justify-content:center; font-weight:bolder; background-color:<?php echo $couleur; ?>; padding:10px; color:white; border-radius:5px;">
+                                <?php echo number_format($pourcentage_payé, 2). '%';?>
+                            </p>
+                        </td>
+                        <td style="float:right;">
+                            <a href="<?= base_url('Controller/details_devis_admin?id=' . $tt->id_demande) ?>" class="btn btn-light btn-round px-5">Voir la liste des travaux à effectuer</a>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+
+
                  
                 </tbody>
               </table>
