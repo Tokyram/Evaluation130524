@@ -262,7 +262,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 				JOIN 
 					maison m ON dm.id_maison = m.id
 				JOIN 
-					type_maison tm ON m.id_type_maison = tm.id";
+					type_maison tm ON m.id_type_maison = tm.id
+					group by id_demande
+					";
 	
 		return $this->db->query($sql)->result();
 	}
@@ -273,19 +275,25 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 		
 				$this->db->query('SET FOREIGN_KEY_CHECKS = 0');
 
-				// Supprimer les données de la table 'type_travaux'
-				$this->db->truncate('type_travaux');
-
-				// Supprimer les données de la table 'unite'
-				$this->db->truncate('unite');
-
 				// Supprimer les données de la table 'travaux'
 				$this->db->truncate('travaux');
 
-				// Supprimer les données de la table 'suivi_travaux'
-				$this->db->truncate('suivi_travaux');
+				$this->db->truncate('maison');
+
+				$this->db->truncate('type_maison');
+
+				$this->db->truncate('devis');
+
+				$this->db->truncate('details_devis');
+				$this->db->truncate('unite');
+
+
+				$this->db->truncate('demande_maison_finition');
+
+				$this->db->truncate('historique_payement');
 
 				$this->db->where('type_utilisateur !=', '1');
+
         		$this->db->delete('utilisateur');
 
 				// Réactiver les contraintes de clé étrangère

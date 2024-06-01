@@ -54,14 +54,16 @@
 
 
                  
-                 
+                  <h2 class="float-right" style="margin-right:100px; margin-top:50px">
+                    <p>Total : <small class="text"><?php echo number_format($tt->nouveau_prix_total_devis,2). 'Ar';?> </small></p>
+                  </h2>
                   <?php }?>
                 </tbody>
               </table>
             </div>
-            <h2 class="float-right" style="margin-right:100px; margin-top:50px">
+            <!-- <h2 class="float-right" style="margin-right:100px; margin-top:50px">
                 <p>Total : <small class="text"><?php echo number_format($tt->nouveau_prix_total_devis,2). 'Ar';?> </small></p>
-            </h2>
+            </h2> -->
             <div class="row">
             <div class="col-lg-6">
             

@@ -123,7 +123,7 @@
       </li>
       <?php }?>
       
-      <?php if(!isset($_SESSION['utilisateur'])) {?>
+      <!-- <?php if(!isset($_SESSION['utilisateur'])) {?>
       <li>
         <a href="<?=base_url('Controller/forms_importation')?>">
         <svg xmlns="http://www.w3.org/2000/svg"  width="20" height="20" fill="currentColor" class="bi bi-file-earmark-arrow-up-fill" viewBox="0 0 16 16">
@@ -131,7 +131,7 @@
         </svg>       <span style="margin-left:5px">Import</span>
         </a>
       </li>
-      <?php }?>
+      <?php }?> -->
       <!-- <li>
         <a href="<?=base_url('Controller/calendar')?>">
           <i class="zmdi zmdi-calendar-check"></i> <span>Calendar</span>

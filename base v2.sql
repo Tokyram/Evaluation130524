@@ -70,7 +70,8 @@ CREATE INDEX fk_demande_maison_finition_utilisateur ON btp.demande_maison_finiti
 CREATE  TABLE btp.devis ( 
 	id                   INT    NOT NULL AUTO_INCREMENT  PRIMARY KEY,
 	designation          VARCHAR(255)       ,
-	id_maison            INT       
+	id_maison            INT       ,
+	ref_devis            VARCHAR(255)       
  ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 
 CREATE INDEX fk_devis_maison ON btp.devis ( id_maison );
@@ -79,7 +80,8 @@ CREATE  TABLE btp.historique_payement (
 	id                   INT    NOT NULL AUTO_INCREMENT  PRIMARY KEY,
 	montant              FLOAT(10,2)       ,
 	date_payement        DATE       ,
-	id_demande_maison_finition INT       
+	id_demande_maison_finition INT       ,
+	ref_paiement         VARCHAR(255)       
  ) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=latin1;
 
 CREATE INDEX fk_historique_payement_demande_maison_finition ON btp.historique_payement ( id_demande_maison_finition );

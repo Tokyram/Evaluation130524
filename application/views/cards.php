@@ -4,9 +4,9 @@
   $user2 = $this->session->userdata('administrateur');
 
   if ($user ) {
-      echo 'Nom d\'utilisateur : ' . $user['nom'];
+      echo 'Nom d\'utilisateur : ' . $user['telephone'];
   } elseif($user2) {
-      echo 'Nom d\'utilisateur : ' . $user2['nom'];
+      echo 'Nom d\'utilisateur : ' . $user2['telephone'];
   }else{
       echo "Aucun utilisateur connecté.";
   }

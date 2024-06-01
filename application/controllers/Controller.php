@@ -543,85 +543,25 @@ class Controller extends CI_Controller {
 		$this->load->view('header', $date);
 	}
 
-	// public function upload_csv_1() {
-	// 	$this->load->database();
-		
-	// 	// Appel de la fonction pour traiter le premier fichier CSV
-	// 	$file_path = $_FILES['csv_file_1']['tmp_name'];
-	// 	$handle = fopen($file_path, "r");
+	public function importation_csv_travaux_maison(){
+		// Vérifiez si le fichier CSV pour les travaux de maison a été soumis
+		if (!empty($_FILES['csv_file_1']['name'])) {
+			// Appel de la fonction pour traiter le premier fichier CSV
+			$this->upload_csv_1();
+		} else {
+			echo "Veuillez sélectionner le fichier CSV pour les travaux de maison.";
+		}
 	
-	// 	if ($handle !== FALSE) {
-	// 		// Créer la table temporaire si elle n'existe pas
-	// 		$this->db->query("CREATE TEMPORARY TABLE IF NOT EXISTS temp_table1 (
-	// 			type_maison varchar(255),
-	// 			description varchar(255),
-	// 			surface float(10,2),
-	// 			code_travaux int(11),
-	// 			type_travaux varchar(255),
-	// 			unite varchar(255),
-	// 			prix_unitaire float(10,2),
-	// 			quantite double precision,
-	// 			duree_travaux double precision
-	// 		)");
-	
-	// 		$line_count = 0;
-	// 		while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
-	// 			if ($line_count == 0) {
-	// 				$line_count++;
-	// 				continue;
-	// 			}
-	
-	// 			// Insérer les données dans la table temporaire
-	// 			$this->db->insert('temp_table1', array(
-	// 				'type_maison' => $data[0],
-	// 				'description' => $data[1],
-	// 				'surface' => $data[2],
-	// 				'code_travaux' => $data[3],
-	// 				'type_travaux' => $data[4],
-	// 				'unite' => $data[5],
-	// 				'prix_unitaire' => $data[6],
-	// 				'quantite' => $data[7],
-	// 				'duree_travaux' => $data[8]
-	// 			));
-	
-	// 			// Récupérer les ID des enregistrements associés (type_maison, unite)
-	// 			$exist_type_maison = $this->db->get_where('type_maison', array('nom_maison' => $data[0]))->row()->id;
-	// 			$exist_unite = $this->db->get_where('unite', array('designation' => $data[5]))->row()->id;
-	
-	// 			// Insérer les données dans les tables liées avec les contraintes de clé étrangère
-	// 			$travaux_data = array(
-	// 				'code_travaux' => $data[3],
-	// 				'designation' => $data[4],
-	// 				'unite' => $exist_unite, // Utilisation de l'ID de l'unité existante
-	// 				'prix_unitaire' => $data[6],
-	// 				'quantite' => $data[7]
-	// 			);
-	// 			$this->db->insert('travaux', $travaux_data);
-	
-	// 			$details_devis_data = array(
-	// 				'id_travaux' => $this->db->insert_id(), // Utilisation de l'ID du dernier travail inséré
-	// 				'prix_unitaire' => $data[6],
-	// 				'quantite' => $data[7]
-	// 			);
-	// 			$this->db->insert('details_devis', $details_devis_data);
-	
-	// 			$maison_data = array(
-	// 				'id_type_maison' => $exist_type_maison,
-	// 				'nom_maison' => $data[0],
-	// 				'surface' => $data[2]
-	// 			);
-	// 			$this->db->insert('maison', $maison_data);
-	
-	// 			$line_count++;
-	// 		}
-	
-	// 		fclose($handle);
-	// 		redirect(base_url('controller/forms_importation'));
-	// 	} else {
-	// 		// Gérer le cas où aucun fichier n'a été téléchargé
-	// 		echo "Veuillez sélectionner un fichier CSV.";
-	// 	}
-	// }
+		// Vérifiez si le fichier CSV pour les devis a été soumis
+		if (!empty($_FILES['csv_file_2']['name'])) {
+			// Appel de la fonction pour traiter le deuxième fichier CSV
+			$this->upload_csv_2();
+		} else {
+			echo "Veuillez sélectionner le fichier CSV pour les devis.";
+		}
+
+		// redirect(base_url('controller/importation_csv_travaux'));
+	}
 
 	public function upload_csv_1() {
 		$this->load->database();
@@ -652,7 +592,10 @@ class Controller extends CI_Controller {
 						$line_count++;
 						continue;
 					}
-	
+					$pourcentage = str_replace(',', '.', $data[6]);
+					$pourcentage = (float) $pourcentage; 
+					var_dump($pourcentage );
+					
 					// Insertion des données dans la table temporaire
 					$this->db->insert('temp_table1', array(
 						'type_maison' => $data[0],
@@ -661,90 +604,119 @@ class Controller extends CI_Controller {
 						'code_travaux' => $data[3],
 						'type_travaux' => $data[4],
 						'unité' => $data[5],
-						'prix_unitaire' => $data[6],
+						'prix_unitaire' => $pourcentage,
 						'quantite' => $data[7],
 						'duree_travaux' => $data[8]
 					));
 	
-					// Récupération des ID des enregistrements associés (type_maison, unite)
+					// Récupération de l'ID de la maison
 					$exist_type_maison_row = $this->db->get_where('type_maison', array('nom_maison' => $data[0]))->row();
-					$exist_unite_row = $this->db->get_where('unite', array('designation' => $data[5]))->row();
-	
 					if ($exist_type_maison_row) {
 						$exist_type_maison = $exist_type_maison_row->id;
 					} else {
 						// Insérer le type de maison s'il n'existe pas
-						$this->db->insert('type_maison', array('nom_maison' => $data[0]));
+						$this->db->insert('type_maison', array(
+							'nom_maison' => $data[0],
+							'duree' => $data[8]
+						));
 						$exist_type_maison = $this->db->insert_id();
 					}
+
 	
-					if ($exist_unite_row) {
-						$exist_unite = $exist_unite_row->id;
-					} else {
-						// Insérer l'unité s'elle n'existe pas
-						$this->db->insert('unite', array('designation' => $data[5]));
-						$exist_unite = $this->db->insert_id();
-					}
-	
-					// Insérer les enregistrements dans les autres tables avec les clés étrangères
 					$travaux_row = $this->db->get_where('travaux', array('code_travaux' => $data[3]))->row();
+						if ($travaux_row) {
+							$id_travaux = $travaux_row->id;
+						} else {
+							// Récupération de l'ID de l'unité
+							$exist_unite_row = $this->db->get_where('unite', array('designation' => $data[5]))->row();
+							if ($exist_unite_row) {
+								$exist_unite = $exist_unite_row->id;
+							} else {
+								// Si l'unité n'existe pas, insérer cette nouvelle unité
+								$this->db->insert('unite', array('designation' => $data[5]));
+								$exist_unite = $this->db->insert_id();
+							}
 
-					if ($travaux_row) {
-						$id_travaux = $travaux_row->id;
-					} else {
-						$travaux_data = array(
-							'code_travaux' => $data[3],
-							'designation' => $data[4],
-							'id_unite' => $exist_unite,
-							'prix_unitaire' => $data[6]
-						);
-						$this->db->insert('travaux', $travaux_data);
-						$id_travaux = $this->db->insert_id();
-					}
-					
-					$type_maison_row = $this->db->get_where('type_maison', array('nom_maison' => $data[0]))->row();
-					if ($type_maison_row) {
-						// Le type de maison existe déjà, vous pouvez utiliser son ID
-						$id_type_maison = $type_maison_row->id;
-					} else {
-						// Le type de maison n'existe pas, donc vous l'insérez
-						$type_maison_data = array(
-							'nom_maison' => $data[0],
-							'duree' => $data[8] // Ajout de la durée
-						);
-						$this->db->insert('type_maison', $type_maison_data);
-						$id_type_maison = $this->db->insert_id();
-					}
+							// Insertion des données dans la table travaux
+							$travaux_data = array(
+								'code_travaux' => $data[3],
+								'designation' => $data[4],
+								'id_unite' => $exist_unite,
+								'prix_unitaire' => $pourcentage
+							);
+							$this->db->insert('travaux', $travaux_data);
+							$id_travaux = $this->db->insert_id();
+						}
 
-					
+
+
+	
+					// Insertion de la maison dans la table maison si elle n'existe pas
 					$existing_maison_row = $this->db->get_where('maison', array('description' => $data[1], 'surface' => $data[2]))->row();
-
 					if (!$existing_maison_row) {
-						// Si aucune entrée n'existe avec la même description et surface, alors insérer
 						$maison_data = array(
 							'id_type_maison' => $exist_type_maison,
 							'description' => $data[1],
-							'surface' => $data[2],
-							// Ajouter d'autres champs si nécessaire
+							'surface' => $data[2]
 						);
 						$this->db->insert('maison', $maison_data);
 					}
+	
+					$maison_row = $this->db->get_where('maison', array('description' => $data[1], 'surface' => $data[2]))->row();
+					if ($maison_row) {
+						$id_maison = $maison_row->id;
+					} else {
+						// Gérer l'absence de la maison
+						// Vous pouvez choisir de ne rien faire, de générer une erreur ou d'insérer la maison ici
+						// Pour l'exemple, j'utilise 0 comme ID de maison inexistant
+						$id_maison = 0;
+					}
+
+					// Vérifier s'il existe déjà un devis pour cette maison avec la même désignation
+					$existing_devis = $this->db->get_where('devis', array('designation' => $data[0], 'id_maison' => $id_maison))->row();
+					if ($existing_devis) {
+						// Si le devis existe déjà, mettez à jour ses détails au lieu d'en insérer un nouveau
+						$id_devis = $existing_devis->id;
+
+						$devis_detail_data = array(
+							'designation' => $data[0], // Utiliser le nom de maison comme désignation
+							'id_maison' => $id_maison,
+						);
+						$this->db->set($devis_detail_data);
+						$this->db->where('id', $id_devis);
+						$this->db->update('devis');
+					} else {
+						// Si le devis n'existe pas encore, insérez-le dans la table devis
+						$devis_data = array(
+							'designation' => $data[0], // Utiliser le nom de maison comme désignation
+							'id_maison' => $id_maison, // Insérer l'ID de la maison
+							// Ajouter d'autres champs si nécessaire
+						);
+						$this->db->insert('devis', $devis_data);
+						$id_devis = $this->db->insert_id();
+					}
+
 					
-					$prix_total = $data[6] * $data[7];
+					// Insérer les détails du devis
+					$prix_total = $pourcentage * $data[7];
+
+					$pt = str_replace(',', '.', $prix_total);
+					$pt = (float) $pt; 
+
 					$details_devis_data = array(
 						'id_travaux' => $id_travaux,
-						'prix_unitaire' => $data[6],
 						'quantite' => $data[7],
-						'prix_total' => $prix_total
+						'prix_unitaire' => $pourcentage,
+						'prix_total' => $pt,
+						'id_devis' => $id_devis
 					);
 					$this->db->insert('details_devis', $details_devis_data);
-					// Vous pouvez continuer à insérer dans les autres tables selon vos besoins
 	
 					$line_count++;
 				}
 	
 				fclose($handle);
-				redirect(base_url('controller/forms_importation'));
+				// redirect(base_url('controller/forms_importation_t_m'));
 			} else {
 				// Gérer le cas où aucun fichier n'a été téléchargé
 				echo "Veuillez sélectionner un fichier CSV.";
@@ -754,6 +726,249 @@ class Controller extends CI_Controller {
 			echo "Veuillez sélectionner un fichier CSV.";
 		}
 	}
+
+	public function generate_ref_devis($length = 10) {
+		$characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+		$characters_length = strlen($characters);
+		$random_string = '';
+	
+		for ($i = 0; $i < $length; $i++) {
+			$random_string .= $characters[rand(0, $characters_length - 1)];
+		}
+	
+		return $random_string;
+	}
+	
+	
+	public function upload_csv_2() {
+		$this->load->database();
+		
+		if (isset($_FILES['csv_file_2'])) {
+			// Appel de la fonction pour traiter le deuxième fichier CSV
+			$file_path = $_FILES['csv_file_2']['tmp_name'];
+			$handle = fopen($file_path, "r");
+	
+			if ($handle !== FALSE) {
+				$line_count = 0;
+	
+				while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+					if ($line_count == 0) {
+						$line_count++;
+						continue;
+					}
+	
+					// Récupération de l'ID utilisateur associé au client
+					$user_row = $this->db->get_where('utilisateur', array('telephone' => $data[0]))->row();
+	
+					if (!$user_row) {
+						// Insérer un nouvel utilisateur
+						$user_data = array(
+							'telephone' => $data[0],
+							'nom' => '', // Remplissez avec les autres données utilisateur si disponibles
+							'prenom' => '',
+							'email' => '',
+							'mdp' => '', // Assurez-vous de traiter correctement le mot de passe
+							'type_utilisateur' => 0 // Spécifiez le type d'utilisateur si nécessaire
+						);
+						$this->db->insert('utilisateur', $user_data);
+						$user_id = $this->db->insert_id();
+					} else {
+						$user_id = $user_row->id;
+					}
+	
+					// Récupération de l'ID de la finition associée à la désignation
+					$finition_row = $this->db->get_where('finition', array('designation' => $data[3]))->row();
+					if ($finition_row && $finition_row->pourcentage != $data[4]) {
+						// Convertir la valeur de pourcentage en float
+						$pourcentage = floatval(str_replace(',', '.', $data[4]));
+
+						// Mettre à jour le pourcentage de la finition
+						$this->db->set('pourcentage', $pourcentage);
+						$this->db->where('designation', $data[3]);
+						$this->db->update('finition');
+					}
+
+	
+					// Vérification si la finition existe et récupération de son ID
+					if ($finition_row) {
+						$id_finition = $finition_row->id;
+					} else {
+						// La finition n'existe pas, vous pouvez gérer cela en conséquence
+						 $pourcentage = floatval(str_replace(',', '.', $data[4]));
+						// Insérer la nouvelle finition dans la table et récupérer son ID
+						$new_finition_data = array(
+							'designation' => $data[3],
+							'pourcentage' => $pourcentage // Assurez-vous de récupérer la valeur correcte pour le pourcentage
+						);
+						$this->db->insert('finition', $new_finition_data);
+						$id_finition = $this->db->insert_id();
+					}
+	
+					// Récupération de l'ID de la maison associée au nom de la maison
+					// Récupération de l'ID du type de maison associé au nom de la maison
+						$type_maison_row = $this->db->get_where('type_maison', array('nom_maison' => $data[2]))->row();
+						if ($type_maison_row) {
+							$id_type_maison = $type_maison_row->id;
+							$duree_maison = $type_maison_row->duree;
+						} else {
+							// Gérez le cas où le type de maison n'existe pas
+							// Par exemple, affichez un message d'erreur ou créez un nouveau type de maison
+							// Pour l'exemple, nous fixons un ID bidon
+							$id_type_maison = 0;
+							$duree_maison = 0;
+						}
+
+						// Recherche de l'ID de la maison en fonction du nom de la maison et de l'ID du type de maison
+						$maison_row = $this->db->get_where('maison', array('id_type_maison' => $id_type_maison))->row();
+						if ($maison_row) {
+							$id_maison = $maison_row->id;
+						} else {
+							// Gérez le cas où la maison n'existe pas
+							// Par exemple, affichez un message d'erreur ou créez une nouvelle maison
+							// Pour l'exemple, nous fixons un ID bidon
+							$id_maison = 0;
+						}
+
+
+						$devis_data = array(
+							'designation' => $data[2],
+							'ref_devis' => $data[1], // Ajouter la référence de devis
+							'id_maison' => $id_maison // Ajouter l'ID de maison
+							// Autres champs de la table devis
+						);
+						$this->db->insert('devis', $devis_data);
+	
+	
+						$date_devis = date('Y-m-d', strtotime(str_replace('/', '-', $data[5])));
+						$date_debut = date('Y-m-d', strtotime(str_replace('/', '-', $data[6])));
+
+						// Calcul de la date de fin en ajoutant la durée à la date de début
+						$date_fin = date('Y-m-d', strtotime($date_debut . ' +' . $duree_maison . ' days'));
+
+						// Insertion des données dans la table demande_maison_finition
+						$demande_maison_finition_data = array(
+							'id_maison' => $id_maison,
+							'id_finition' => $id_finition,
+							'id_user' => $user_id,
+							'date_creation_devis' => $date_devis,
+							'date_debut' => $date_debut,
+							'date_fin' => $date_fin, // Ajout de la date de fin calculée
+							'lieu' => $data[7]
+						);
+							$this->db->insert('demande_maison_finition', $demande_maison_finition_data);
+
+						
+
+					$line_count++;
+				}
+	
+				fclose($handle);
+				// redirect(base_url('controller/forms_importation_t_m'));
+			} else {
+				// Gérer le cas où aucun fichier n'a été téléchargé
+				echo "Veuillez sélectionner un fichier CSV.";
+			}
+		} else {
+			// Gérer le cas où aucun fichier n'a été téléchargé
+			echo "Veuillez sélectionner un fichier CSV.";
+		}
+	}
+	
+	public function upload_csv_paiement() {
+		$this->load->database();
+		
+		if (isset($_FILES['csv_file_paiement'])) {
+			// Appel de la fonction pour traiter le fichier CSV de paiement
+			$file_path = $_FILES['csv_file_paiement']['tmp_name'];
+			$handle = fopen($file_path, "r");
+	
+			if ($handle !== FALSE) {
+				$line_count = 0;
+	
+				while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+					if ($line_count == 0) {
+						$line_count++;
+						continue;
+					}
+	
+					// Récupération de l'ID du devis en jointure avec la table devis
+					$this->db->select('devis.id as id_devis');
+					$this->db->from('devis');
+					$this->db->where('devis.id_maison', $data[0]);
+					$query = $this->db->get();
+					$devis_row = $query->row();
+					
+	
+					if (!$devis_row) {
+						// Gérer le cas où la référence de devis n'existe pas
+						continue; // passer à la ligne suivante
+					}
+
+					// Récupération de l'ID de la demande_maison_finition en fonction de la ref_devis du fichier CSV
+					// Récupération de l'ID de la demande_maison_finition en fonction de l'ID du devis
+						// Récupération de l'ID de la demande_maison_finition en fonction de l'ID du devis
+					$this->db->select('id');
+					$this->db->from('demande_maison_finition');
+					$this->db->where('id_maison', $devis_row->id_maison); // Utilisation de l'ID du devis récupéré
+					$query = $this->db->get();
+					$row = $query->row();
+
+					if (!$row) {
+						// Gérer le cas où la demande de maison finition n'existe pas pour cet ID de devis
+						continue; // passer à la ligne suivante
+					}
+
+					// Maintenant, vous pouvez accéder à l'ID de la demande de maison finition
+					$id_demande_maison_finition = $row->id;
+
+
+
+					$demande = $this->db->get_where('demande_maison_finition', array('id_maison' => $devis_row))->row();
+						if ($demande) {
+							$demande_maison = $demande->id;
+						} else {
+							// Gérez le cas où la maison n'existe pas
+							// Par exemple, affichez un message d'erreur ou créez une nouvelle maison
+							// Pour l'exemple, nous fixons un ID bidon
+							$demande_maison = 0;
+						}
+	
+					// Créer un tableau de données pour l'insertion dans la table paiement
+					$paiement_data = array(
+						'id_devis' =>  $devis_row->id_devis,
+						'ref_paiement' => $data[1],
+						'date_payement' => date('Y-m-d', strtotime(str_replace('/', '-', $data[2]))),
+						'montant' => $data[3],
+						'id_demande_maison_finition' => $id_demande_maison_finition // Utiliser l'ID de devis récupéré
+						// Ajoutez d'autres champs si nécessaire
+					);
+
+					// echo "devis: " . $devis_row->id_devis . "<br>";
+					// 	echo "ref p: " .$data[1] . "<br>";
+					// 	echo "ref p: " .$data[3] . "<br>";
+					// 	echo "ref p: " .$id_demande_maison_finition. "<br>";
+					// 	echo "Date : " . date('Y-m-d', strtotime(str_replace('/', '-', $data[2]))) . "<br>";
+	
+					// Insérer les données dans la table paiement
+					$this->db->insert('historique_payement', $paiement_data);
+	
+					$line_count++;
+				}
+	
+				fclose($handle);
+				// redirect(base_url('controller/importation_csv_payement'));
+			} else {
+				// Gérer le cas où aucun fichier n'a été téléchargé
+				echo "Veuillez sélectionner un fichier CSV de paiement.";
+			}
+		} else {
+			// Gérer le cas où aucun fichier n'a été téléchargé
+			echo "Veuillez sélectionner un fichier CSV de paiement.";
+		}
+	}
+	
+	
+	
 	
 	
 		
